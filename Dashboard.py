@@ -18,8 +18,8 @@ sumber_data = st.sidebar.radio(
 file_upload = st.file_uploader("Upload Excel", type=["xlsx"])
 
 sharepoint_url = st.sidebar.text_input(
-    "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAbPug82D1-1DWEP8Q0xjqpU?e=j1i6db",
-    placeholder="Paste link SharePoint di sini"
+    "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=AsgoKx",
+    placeholder="https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=AsgoKx"
 )
 
 df = None
