@@ -462,6 +462,8 @@ if file:
             3. Identifikasi cluster/customer segment yang menjadi growth driver.
             4. Identifikasi cluster yang turun dan perlu perhatian.
             5. Berikan rekomendasi aksi yang konkret untuk UP3/ULP.
+            6. Analisis bisa diselaraskan dengan isu/kondisi yang ada di media secara valid.
+            7. anda bisa mencantumkan sumber data jika ambil dari external
 
             OUTPUT WAJIB:
             1. Executive Summary maksimal 3 kalimat.
