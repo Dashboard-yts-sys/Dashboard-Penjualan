@@ -175,7 +175,7 @@ if file:
     tampilkan_map = st.sidebar.checkbox("Tampilkan Map Pelanggan", value=False)
 
     st.sidebar.header("🧠 AI Insight")
-    api_key = st.sidebar.text_input("Google AI Studio API Key", type="password")
+    api_key = st.secrets["GOOGLE_API_KEY"]
 
     df_filter = df[
         (df["TARIF"].isin(pilih_tarif)) &
