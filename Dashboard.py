@@ -8,7 +8,15 @@ st.set_page_config(page_title="Dashboard Penjualan TM", layout="wide")
 
 st.title("⚡ Dashboard Penjualan kluster B & I UID Jawa Timur")
 
-DEFAULT_FILE = "Monev kWh TM-B3I3 YoY Maret.xlsx"
+url = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAbPug82D1-1DWEP8Q0xjqpU?e=j1i6db
+"
+try:
+    df = pd.read_excel(url, sheet_name="TM", header=1)
+    st.success("Data berhasil diambil dari SharePoint")
+except:
+    st.error("Gagal mengambil data dari SharePoint")
+
+DEFAULT_FILE = df
 file_upload = st.file_uploader("Upload Excel baru jika ingin update data", type=["xlsx"])
 if file_upload is not None:
     file = file_upload
