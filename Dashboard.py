@@ -68,7 +68,7 @@ sumber_data = st.sidebar.radio(
 file_upload = st.file_uploader("Upload Excel", type=["xlsx"])
 
 link_file = st.sidebar.text_input(
-    "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22",
+    "Link Excel SharePoint / Google Drive",
     placeholder="https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22"
 )
 
