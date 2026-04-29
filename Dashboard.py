@@ -8,19 +8,52 @@ st.set_page_config(page_title="Dashboard Penjualan TM", layout="wide")
 
 st.title("⚡ Dashboard Penjualan kluster B & I UID Jawa Timur")
 
-# =========================
-# INPUT LINK SHAREPOINT DI SINI
-# =========================
-DEFAULT_SHAREPOINT_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4"
+import requests
+from io import BytesIO
+import re
 
-def to_direct_download_url(url):
+# =========================
+# FUNGSI BACA FILE DARI LINK
+# =========================
+def convert_google_drive_url(url):
+    match = re.search(r"/d/([a-zA-Z0-9_-]+)", url)
+    if match:
+        file_id = match.group(1)
+        return f"https://drive.google.com/uc?export=download&id={file_id}"
+
+    match = re.search(r"id=([a-zA-Z0-9_-]+)", url)
+    if match:
+        file_id = match.group(1)
+        return f"https://drive.google.com/uc?export=download&id={file_id}"
+
+    return url
+
+
+def convert_sharepoint_url(url):
     if "download=1" in url:
         return url
     if "?" in url:
         return url + "&download=1"
     return url + "?download=1"
 
-st.sidebar.header("📁 Sumber Data")
+
+def read_excel_from_url(url):
+    if "drive.google.com" in url:
+        url = convert_google_drive_url(url)
+    elif "sharepoint.com" in url or "onedrive" in url:
+        url = convert_sharepoint_url(url)
+
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    response = requests.get(url, headers=headers, allow_redirects=True)
+
+    if response.status_code != 200:
+        raise Exception(f"Gagal download file. Status code: {response.status_code}")
+
+    return pd.read_excel(BytesIO(response.content), sheet_name="TM", header=1)
+
 
 # =========================
 # SUMBER DATA
@@ -29,15 +62,14 @@ st.sidebar.header("📁 Sumber Data")
 
 sumber_data = st.sidebar.radio(
     "Pilih sumber data",
-    ["Upload Manual", "SharePoint"]
+    ["Upload Manual", "SharePoint / Google Drive"]
 )
 
 file_upload = st.file_uploader("Upload Excel", type=["xlsx"])
 
-sharepoint_url = st.sidebar.text_input(
-    "Link SharePoint Excel",
-    value=DEFAULT_SHAREPOINT_URL,
-    placeholder="Paste link SharePoint Excel di sini"
+link_file = st.sidebar.text_input(
+    "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22",
+    placeholder="https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22"
 )
 
 df = None
@@ -50,21 +82,21 @@ if sumber_data == "Upload Manual":
         st.warning("Silakan upload file Excel terlebih dahulu.")
         st.stop()
 
-elif sumber_data == "SharePoint":
-    if sharepoint_url:
+elif sumber_data == "SharePoint / Google Drive":
+    if link_file:
         try:
-            download_url = to_direct_download_url(sharepoint_url)
-            df = pd.read_excel(download_url, sheet_name="TM", header=1)
-            st.success("Data berhasil diambil dari SharePoint.")
+            df = read_excel_from_url(link_file)
+            st.success("Data berhasil dibaca dari link.")
         except Exception as e:
-            st.error("Gagal membaca file SharePoint. Pastikan link sudah Anyone dan bisa dibuka tanpa login.")
+            st.error("Gagal membaca file dari link.")
             st.write(e)
             st.stop()
     else:
-        st.warning("Masukkan link SharePoint terlebih dahulu.")
+        st.warning("Masukkan link Excel terlebih dahulu.")
         st.stop()
 
 df.columns = df.columns.astype(str).str.strip()
+
 bulan_map = {
     "Januari": "Jan",
     "Februari": "Feb",
