@@ -8,25 +8,44 @@ st.set_page_config(page_title="Dashboard Penjualan TM", layout="wide")
 
 st.title("⚡ Dashboard Penjualan kluster B & I UID Jawa Timur")
 
-url = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAbPug82D1-1DWEP8Q0xjqpU?e=j1i6db
-"
-try:
-    df = pd.read_excel(url, sheet_name="TM", header=1)
-    st.success("Data berhasil diambil dari SharePoint")
-except:
-    st.error("Gagal mengambil data dari SharePoint")
+st.sidebar.header("https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAbPug82D1-1DWEP8Q0xjqpU?e=j1i6db
+")
 
-DEFAULT_FILE = df
-file_upload = st.file_uploader("Upload Excel baru jika ingin update data", type=["xlsx"])
-if file_upload is not None:
-    file = file_upload
-    st.success("Menggunakan file Excel baru yang diupload.")
-else:
-    file = DEFAULT_FILE
-    st.info("Menggunakan file Excel default dari server.")
+sumber_data = st.sidebar.radio(
+    "Pilih sumber data",
+    ["Upload Manual", "SharePoint"]
+)
 
-if file:
-    df = pd.read_excel(file, sheet_name="TM", header=1)
+file_upload = st.file_uploader("Upload Excel", type=["xlsx"])
+
+sharepoint_url = st.sidebar.text_input(
+    "Link SharePoint",
+    placeholder="Paste link SharePoint di sini"
+)
+
+df = None
+
+if sumber_data == "Upload Manual":
+    if file_upload is not None:
+        df = pd.read_excel(file_upload, sheet_name="TM", header=1)
+        st.success("Menggunakan file upload manual")
+    else:
+        st.warning("Silakan upload file Excel terlebih dahulu")
+        st.stop()
+
+elif sumber_data == "SharePoint":
+    if sharepoint_url:
+        try:
+            df = pd.read_excel(sharepoint_url, sheet_name="TM", header=1)
+            st.success("Data berhasil diambil dari SharePoint")
+        except:
+            st.error("Gagal membaca file SharePoint")
+            st.stop()
+    else:
+        st.warning("Masukkan link SharePoint terlebih dahulu")
+        st.stop()
+
+# bersihkan kolom
     df.columns = df.columns.astype(str).str.strip()
 
     bulan_map = {
