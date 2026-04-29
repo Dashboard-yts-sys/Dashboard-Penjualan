@@ -8,6 +8,23 @@ st.set_page_config(page_title="Dashboard Penjualan TM", layout="wide")
 
 st.title("⚡ Dashboard Penjualan kluster B & I UID Jawa Timur")
 
+# =========================
+# INPUT LINK SHAREPOINT DI SINI
+# =========================
+DEFAULT_SHAREPOINT_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4"
+
+def to_direct_download_url(url):
+    if "download=1" in url:
+        return url
+    if "?" in url:
+        return url + "&download=1"
+    return url + "?download=1"
+
+st.sidebar.header("📁 Sumber Data")
+
+# =========================
+# SUMBER DATA
+# =========================
 st.sidebar.header("📁 Sumber Data")
 
 sumber_data = st.sidebar.radio(
@@ -18,8 +35,9 @@ sumber_data = st.sidebar.radio(
 file_upload = st.file_uploader("Upload Excel", type=["xlsx"])
 
 sharepoint_url = st.sidebar.text_input(
-    "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=AsgoKx",
-    placeholder="https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=AsgoKx"
+    "Link SharePoint Excel",
+    value=DEFAULT_SHAREPOINT_URL,
+    placeholder="Paste link SharePoint Excel di sini"
 )
 
 df = None
@@ -35,17 +53,17 @@ if sumber_data == "Upload Manual":
 elif sumber_data == "SharePoint":
     if sharepoint_url:
         try:
-            df = pd.read_excel(sharepoint_url, sheet_name="TM", header=1)
+            download_url = to_direct_download_url(sharepoint_url)
+            df = pd.read_excel(download_url, sheet_name="TM", header=1)
             st.success("Data berhasil diambil dari SharePoint.")
         except Exception as e:
-            st.error("Gagal membaca file SharePoint. Pastikan link bisa diakses.")
+            st.error("Gagal membaca file SharePoint. Pastikan link sudah Anyone dan bisa dibuka tanpa login.")
             st.write(e)
             st.stop()
     else:
         st.warning("Masukkan link SharePoint terlebih dahulu.")
         st.stop()
 
-# Bersihkan kolom — posisi harus rata kiri, bukan masuk ke elif
 df.columns = df.columns.astype(str).str.strip()
 bulan_map = {
     "Januari": "Jan",
