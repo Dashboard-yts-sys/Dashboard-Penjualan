@@ -6,9 +6,16 @@ import pydeck as pdk
 
 st.set_page_config(page_title="Dashboard Penjualan TM", layout="wide")
 
-st.title("⚡ Dashboard Penjualan Tenaga Listrik TM UID Jawa Timur")
+st.title("⚡ Dashboard Penjualan kluster B & I UID Jawa Timur")
 
-file = st.file_uploader("Upload Excel", type=["xlsx"])
+DEFAULT_FILE = "Monev kWh TM-B3I3 YoY Maret.xlsx"
+file_upload = st.file_uploader("Upload Excel baru jika ingin update data", type=["xlsx"])
+if file_upload is not None:
+    file = file_upload
+    st.success("Menggunakan file Excel baru yang diupload.")
+else:
+    file = DEFAULT_FILE
+    st.info("Menggunakan file Excel default dari server.")
 
 if file:
     df = pd.read_excel(file, sheet_name="TM", header=1)
