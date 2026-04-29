@@ -3,13 +3,58 @@ import pandas as pd
 import plotly.express as px
 import google.generativeai as genai
 import pydeck as pdk
+import requests
+from io import BytesIO
+import re
 
-st.set_page_config(page_title="Dashboard Penjualan TM", layout="wide")
+st.set_page_config(page_title="Dashboard Penjualan TMTT", layout="wide")
 
 st.title("⚡ Dashboard Penjualan kluster B & I UID Jawa Timur")
-
+# =========================
+# DEFAULT LINK DATA DI SINI
+# =========================
 DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22"
 
+def convert_google_drive_url(url):
+    match = re.search(r"/d/([a-zA-Z0-9_-]+)", url)
+    if match:
+        file_id = match.group(1)
+        return f"https://drive.google.com/uc?export=download&id={file_id}"
+
+    match = re.search(r"id=([a-zA-Z0-9_-]+)", url)
+    if match:
+        file_id = match.group(1)
+        return f"https://drive.google.com/uc?export=download&id={file_id}"
+
+    return url
+
+def convert_sharepoint_url(url):
+    if "download=1" in url:
+        return url
+    if "?" in url:
+        return url + "&download=1"
+    return url + "?download=1"
+
+def read_excel_from_url(url):
+    if "drive.google.com" in url:
+        url = convert_google_drive_url(url)
+    elif "sharepoint.com" in url or "onedrive" in url:
+        url = convert_sharepoint_url(url)
+
+    response = requests.get(
+        url,
+        headers={"User-Agent": "Mozilla/5.0"},
+        allow_redirects=True
+    )
+
+    if response.status_code != 200:
+        raise Exception(f"Gagal download file. Status code: {response.status_code}")
+
+    return pd.read_excel(BytesIO(response.content), sheet_name="TM", header=1)
+
+# =========================
+# SUMBER DATA
+# =========================
 st.sidebar.header("📁 Sumber Data")
 
 file_upload = st.file_uploader(
@@ -17,19 +62,12 @@ file_upload = st.file_uploader(
     type=["xlsx"]
 )
 
-df = None
-
 if file_upload is not None:
     df = pd.read_excel(file_upload, sheet_name="TM", header=1)
     st.success("Menggunakan file upload manual.")
 else:
-    try:
-        df = read_excel_from_url(DEFAULT_DATA_URL)
-        st.success("Menggunakan data default dari SharePoint/Drive.")
-    except Exception as e:
-        st.error("Gagal membaca data default dari link.")
-        st.write(e)
-        st.stop()
+    df = read_excel_from_url(DEFAULT_DATA_URL)
+    st.success("Menggunakan data default dari link.")
 
 df.columns = df.columns.astype(str).str.strip()
 bulan_map = {
