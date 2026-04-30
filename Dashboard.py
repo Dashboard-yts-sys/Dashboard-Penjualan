@@ -12,7 +12,7 @@ st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 270px;
+    padding-top: 350px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
