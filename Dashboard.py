@@ -37,12 +37,12 @@ st.markdown("""
 /* KPI FIXED */
 .fixed-kpi {
     position: fixed;
-    top: 200px;
+    top: 160px;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
     z-index: 9998;
-    padding: 12px 24px;
+    padding: 16px 24px;
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border-radius: 0 0 10px 10px;
@@ -63,14 +63,14 @@ st.markdown("""
 }
 
 .kpi-title {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
     color: #64748b;
     line-height: 1.1;
 }
 
 .kpi-value {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 800;
     color: #111827;
     line-height: 1.2;
