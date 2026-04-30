@@ -42,14 +42,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown(f"""
 <div class="fixed-kpi">
-    <div style="display:flex; justify-content:space-between;">
-        <div><b>Kumulatif {tahun_lalu}</b><br>{total_prev:,.2f} GWh</div>
-        <div><b>Kumulatif {tahun_ini}</b><br>{total_now:,.2f} GWh</div>
+    <div style="display:flex; justify-content:space-between; font-size:18px;">
+        <div><b>{mode_periode} {pilih_bulan} {tahun_lalu}</b><br>{total_lalu:,.2f} GWh</div>
+        <div><b>{mode_periode} {pilih_bulan} {tahun_ini}</b><br>{total_ini:,.2f} GWh</div>
         <div><b>Delta</b><br>{delta:,.2f} GWh</div>
         <div><b>Growth YoY</b><br>{growth:.2f}%</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 st.markdown("""
 <div class="fixed-header">
     <h2>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
