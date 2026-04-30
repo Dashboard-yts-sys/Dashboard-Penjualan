@@ -46,7 +46,7 @@ st.markdown("""
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border-radius: 0 0 10px 10px;
-    min-height: 70px;
+    min-height: 80px;
 }
 
 .kpi-row {
@@ -63,7 +63,7 @@ st.markdown("""
 }
 
 .kpi-title {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 600;
     color: #64748b;
     line-height: 1.1;
