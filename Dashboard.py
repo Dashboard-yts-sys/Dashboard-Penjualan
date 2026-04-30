@@ -12,7 +12,7 @@ st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 250px;
+    padding-top: 220px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -32,7 +32,7 @@ st.markdown("""
 
 .fixed-kpi {
     position: fixed;
-    top: 120px;
+    top: 150px;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
@@ -58,7 +58,7 @@ st.markdown("""
 }
 
 .kpi-title {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 600;
     color: #64748b;
     line-height: 1.1;
