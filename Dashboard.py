@@ -7,9 +7,24 @@ import requests
 from io import BytesIO
 import re
 
-st.set_page_config(page_title="Dashboard Penjualan TMTT", layout="wide")
-
-st.title("⚡ Dashboard Penjualan kluster B & I UID Jawa Timur")
+st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
+st.markdown("""
+<style>
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: white;
+    padding: 18px 0 10px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+</style>
+""", unsafe_allow_html=True)
+st.markdown("""
+<div class="sticky-header">
+<h1>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h1>
+</div>
+""", unsafe_allow_html=True)
 # =========================
 # DEFAULT LINK DATA DI SINI
 # =========================
@@ -57,17 +72,17 @@ def read_excel_from_url(url):
 # =========================
 st.sidebar.header("📁 Sumber Data")
 
-file_upload = st.file_uploader(
-    "Upload Excel baru jika ingin override data default",
+file_upload = st.sidebar.file_uploader(
+    "Upload Excel jika ingin data baru",
     type=["xlsx"]
 )
 
 if file_upload is not None:
     df = pd.read_excel(file_upload, sheet_name="TM", header=1)
-    st.success("Menggunakan file upload manual.")
+    st.sidebar.success("Sukses file upload manual.")
 else:
     df = read_excel_from_url(DEFAULT_DATA_URL)
-    st.success("Menggunakan data default dari link.")
+    st.sidebar.success("Sukses data default dari link.")
 
 df.columns = df.columns.astype(str).str.strip()
 bulan_map = {
