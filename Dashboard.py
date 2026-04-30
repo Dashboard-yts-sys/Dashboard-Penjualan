@@ -9,12 +9,6 @@ import re
 
 st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
-<div class="fixed-header">
-    <h2>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
 <style>
 /* HEADER FIXED */
 .fixed-header {
@@ -45,6 +39,21 @@ st.markdown("""
     height: 160px;
 }
 </style>
+""", unsafe_allow_html=True)
+st.markdown(f"""
+<div class="fixed-kpi">
+    <div style="display:flex; justify-content:space-between;">
+        <div><b>Kumulatif {tahun_lalu}</b><br>{total_prev:,.2f} GWh</div>
+        <div><b>Kumulatif {tahun_ini}</b><br>{total_now:,.2f} GWh</div>
+        <div><b>Delta</b><br>{delta:,.2f} GWh</div>
+        <div><b>Growth YoY</b><br>{growth:.2f}%</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+st.markdown("""
+<div class="fixed-header">
+    <h2>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
+</div>
 """, unsafe_allow_html=True)
 
 # =========================
