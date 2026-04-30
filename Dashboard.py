@@ -11,87 +11,71 @@ st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 
 st.markdown("""
 <style>
-/* kasih ruang di atas supaya konten tidak ketiban header fixed */
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 235px;
+    padding-top: 210px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
 
-/* HEADER FIXED */
 .fixed-header {
     position: fixed;
-    top: 1.7rem;
-    left: calc(21rem + 1rem);   /* area setelah sidebar */
+    top: 0.5rem;
+    left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
     z-index: 9999;
-    padding: 14px 24px 14px 24px;
+    padding: 14px 24px;
     border-bottom: 1px solid #ddd;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     border-radius: 0 0 10px 10px;
 }
 
-/* KPI FIXED */
 .fixed-kpi {
     position: fixed;
-    top: 92px;
+    top: 100px;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
     z-index: 9998;
-    padding:  16px 24px 16px 24px;
+    padding: 12px 24px;
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border-radius: 0 0 10px 10px;
-    min-height: 95px;   /* penting agar label KPI tidak kepotong */
+    min-height: 70px;
 }
 
-/* Saat sidebar collapse / layar lebih kecil */
-@media (max-width: 1200px) {
-    .fixed-header, .fixed-kpi {
-        left: 1rem !important;
-        right: 1rem !important;
-    }
-}
-
-/* Optional: rapikan metric mini */
 .kpi-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
     gap: 24px;
-    flex-wrap: nowrap;
+    align-items: center;
 }
 
 .kpi-item {
-    min-width: 150px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .kpi-title {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 600;
-    color: #4b5563;
-    line-height: 1.3;
-    margin-bottom: 6px;
-    white-space: normal;
+    color: #64748b;
+    line-height: 1.1;
 }
 
 .kpi-value {
-    font-size: 20px;
-    font-weight: 700;
-    color: #0f172a;
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
     line-height: 1.2;
-/* Saat layar lebih kecil / sidebar collapse */
+    margin-top: 2px;
+}
+
 @media (max-width: 1200px) {
     .fixed-header, .fixed-kpi {
         left: 1rem !important;
         right: 1rem !important;
-    }
-
-    .kpi-row {
-        flex-wrap: wrap;
     }
 }
 </style>
@@ -357,21 +341,24 @@ st.markdown(f"""
 <div class="fixed-kpi">
     <div class="kpi-row">
         <div class="kpi-item">
-            <div class="kpi-title">{mode_periode} {pilih_bulan} {tahun_lalu}</div>
-            <div class="kpi-value">{total_lalu:,.2f} GWh</div>
+            <span class="kpi-title">2025</span>
+            <span class="kpi-value">{total_lalu:,.2f} GWh</span>
         </div>
         <div class="kpi-item">
-            <div class="kpi-title">{mode_periode} {pilih_bulan} {tahun_ini}</div>
-            <div class="kpi-value">{total_ini:,.2f} GWh</div>
+            <span class="kpi-title">2026</span>
+            <span class="kpi-value">{total_ini:,.2f} GWh</span>
         </div>
         <div class="kpi-item">
-            <div class="kpi-title">Delta</div>
-            <div class="kpi-value">{delta:,.2f} GWh</div>
+            <span class="kpi-title">Delta</span>
+            <span class="kpi-value">{delta:,.2f} GWh</span>
         </div>
         <div class="kpi-item">
-            <div class="kpi-title">Growth YoY</div>
-            <div class="kpi-value">{growth:.2f}%</div>
+            <span class="kpi-title">Growth</span>
+            <span class="kpi-value">{growth:.2f}%</span>
         </div>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-top:6px;">
+        Periode: {mode_periode} {pilih_bulan} | Perbandingan {tahun_lalu} vs {tahun_ini}
     </div>
 </div>
 """, unsafe_allow_html=True)
