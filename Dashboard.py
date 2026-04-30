@@ -8,47 +8,33 @@ from io import BytesIO
 import re
 
 st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
+
 st.markdown("""
 <style>
-/* HEADER FIXED */
 .fixed-header {
     position: fixed;
     top: 0;
-    left: 21rem;  /* offset sidebar */
+    left: 21rem;
     right: 0;
     background-color: white;
-    z-index: 999;
-    padding: 10px 30px 10px 30px;
+    z-index: 9999;
+    padding: 10px 30px;
     border-bottom: 1px solid #ddd;
 }
-
-/* KPI FIXED (di bawah header) */
 .fixed-kpi {
     position: fixed;
     top: 70px;
     left: 21rem;
     right: 0;
     background-color: white;
-    z-index: 998;
-    padding: 10px 30px;
+    z-index: 9998;
+    padding: 12px 30px;
     border-bottom: 1px solid #eee;
 }
-
-/* Spacer supaya konten tidak ketimpa */
 .spacer {
-    height: 160px;
+    height: 165px;
 }
 </style>
-""", unsafe_allow_html=True)
-st.markdown(f"""
-<div class="fixed-kpi">
-    <div style="display:flex; justify-content:space-between; font-size:18px;">
-        <div><b>{mode_periode} {pilih_bulan} {tahun_lalu}</b><br>{total_lalu:,.2f} GWh</div>
-        <div><b>{mode_periode} {pilih_bulan} {tahun_ini}</b><br>{total_ini:,.2f} GWh</div>
-        <div><b>Delta</b><br>{delta:,.2f} GWh</div>
-        <div><b>Growth YoY</b><br>{growth:.2f}%</div>
-    </div>
-</div>
 """, unsafe_allow_html=True)
 
 st.markdown("""
@@ -60,7 +46,7 @@ st.markdown("""
 # =========================
 # DEFAULT LINK DATA DI SINI
 # =========================
-DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22"
+DEFAULT_DATA_URL = "PASTE_LINK_SHAREPOINT_ATAU_GOOGLE_DRIVE_DI_SINI"
 
 def convert_google_drive_url(url):
     match = re.search(r"/d/([a-zA-Z0-9_-]+)", url)
@@ -117,6 +103,10 @@ else:
     st.sidebar.success("Sukses data default dari link.")
 
 df.columns = df.columns.astype(str).str.strip()
+
+# =========================
+# PERIODE DATA
+# =========================
 bulan_map = {
     "Januari": "Jan",
     "Februari": "Feb",
@@ -156,14 +146,11 @@ index_bulan = urutan_bulan.index(kode_bulan)
 def hitung_kwh(df, tahun, kode_bulan, mode):
     if mode == "Bulanan YoY":
         kolom_bulanan = f"kWh {kode_bulan} {tahun}"
-
         if kolom_bulanan in df.columns:
             return pd.to_numeric(df[kolom_bulanan], errors="coerce").fillna(0), kolom_bulanan
-        else:
-            return pd.Series(0, index=df.index), f"{kolom_bulanan} belum tersedia"
+        return pd.Series(0, index=df.index), f"{kolom_bulanan} belum tersedia"
 
     kolom_kumulatif = f"kWh sd {kode_bulan} {tahun}"
-
     if kolom_kumulatif in df.columns:
         return pd.to_numeric(df[kolom_kumulatif], errors="coerce").fillna(0), kolom_kumulatif
 
@@ -178,7 +165,6 @@ def hitung_kwh(df, tahun, kode_bulan, mode):
         nilai = df[kolom_bulanan].apply(
             pd.to_numeric, errors="coerce"
         ).fillna(0).sum(axis=1)
-
         return nilai, " + ".join(kolom_bulanan)
 
     return pd.Series(0, index=df.index), f"Data {kode_bulan} {tahun} belum tersedia"
@@ -206,6 +192,9 @@ df["Growth %"] = df.apply(
     axis=1
 )
 
+# =========================
+# FILTER DATA
+# =========================
 st.sidebar.header("🔎 Filter Data")
 
 pilih_tarif = st.sidebar.multiselect(
@@ -274,6 +263,9 @@ tampilkan_map = st.sidebar.checkbox("Tampilkan Map Pelanggan", value=False)
 st.sidebar.header("🧠 AI Insight")
 api_key = st.secrets["GOOGLE_API_KEY"]
 
+# =========================
+# APPLY FILTER
+# =========================
 df_filter = df[
     (df["TARIF"].isin(pilih_tarif)) &
     (df["UP3"].isin(pilih_up3)) &
@@ -293,18 +285,26 @@ elif kondisi == "Antara":
         (df_filter[metrik_cluster] <= nilai_max)
     ]
 
+# =========================
+# KPI FIXED — TARUH DI SINI, SETELAH TOTAL DIHITUNG
+# =========================
 total_lalu = df_filter["GWh Tahun Lalu"].sum()
 total_ini = df_filter["GWh Tahun Ini"].sum()
 delta = df_filter["Delta GWh"].sum()
 growth = (delta / total_lalu * 100) if total_lalu != 0 else 0
 
-col1, col2, col3, col4 = st.columns(4)
-col1.metric(f"{mode_periode} {pilih_bulan} {tahun_lalu}", f"{total_lalu:,.2f} GWh")
-col2.metric(f"{mode_periode} {pilih_bulan} {tahun_ini}", f"{total_ini:,.2f} GWh")
-col3.metric("Delta", f"{delta:,.2f} GWh")
-col4.metric("Growth YoY", f"{growth:.2f}%")
+st.markdown(f"""
+<div class="fixed-kpi">
+    <div style="display:flex; justify-content:space-between; font-size:18px;">
+        <div><b>{mode_periode} {pilih_bulan} {tahun_lalu}</b><br>{total_lalu:,.2f} GWh</div>
+        <div><b>{mode_periode} {pilih_bulan} {tahun_ini}</b><br>{total_ini:,.2f} GWh</div>
+        <div><b>Delta</b><br>{delta:,.2f} GWh</div>
+        <div><b>Growth YoY</b><br>{growth:.2f}%</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-st.divider()
+st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
 
 # =========================
 # MAP SEBARAN PELANGGAN
@@ -506,6 +506,9 @@ fig_donut = px.pie(
 
 st.plotly_chart(fig_donut, use_container_width=True)
 
+# =========================
+# TABEL PIVOT
+# =========================
 st.subheader("📋 Tabel Pivot Dinamis")
 
 index_pivot = ["UP3", "TARIF", "KLUSTER USAHA"]
@@ -527,12 +530,15 @@ pivot["Growth %"] = pivot.apply(
 
 st.dataframe(pivot, use_container_width=True)
 
+# =========================
+# AI INSIGHT
+# =========================
 st.divider()
 st.subheader("🧠 Generate AI Insight")
 
 if st.button("🔍 Generate AI Insight"):
     if not api_key:
-        st.warning("Masukkan API Key terlebih dahulu di sidebar.")
+        st.warning("API Key belum tersedia di Streamlit Secrets.")
     else:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-3-flash-preview")
@@ -560,7 +566,7 @@ if st.button("🔍 Generate AI Insight"):
         4. Identifikasi cluster yang turun dan perlu perhatian.
         5. Berikan rekomendasi aksi yang konkret untuk UP3/ULP.
         6. Analisis bisa diselaraskan dengan isu/kondisi yang ada di media secara valid.
-        7. anda bisa mencantumkan sumber data jika ambil dari external
+        7. Cantumkan sumber data jika mengambil dari eksternal.
 
         OUTPUT WAJIB:
         1. Executive Summary maksimal 3 kalimat.
