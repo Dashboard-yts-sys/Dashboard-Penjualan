@@ -430,24 +430,24 @@ if search_idpel:
                 hasil[kolom_tampil].sort_values("GWh Tahun Ini", ascending=False),
                 use_container_width=True
             )
-                if len(hasil) == 1:
-                row = hasil.iloc[0]
+        if len(hasil) == 1:
+        row = hasil.iloc[0]
 
-                st.markdown(f"""
-                ### 📌 Detail Pelanggan
+        st.markdown(f"""
+        ### 📌 Detail Pelanggan
 
-                **Nama Pelanggan:** {row.get("NAMA PELANGGAN", "-")}  
-                **IDPEL:** {row.get("IDPEL", "-")}  
-                **UP3:** {row.get("UP3", "-")}  
-                **Tarif:** {row.get("TARIF", "-")}  
-                **Daya:** {row.get("DAYA", "-")}  
-                **Cluster:** {row.get("KLUSTER USAHA", "-")}  
+        **Nama Pelanggan:** {row.get("NAMA PELANGGAN", "-")}  
+        **IDPEL:** {row.get("IDPEL", "-")}  
+        **UP3:** {row.get("UP3", "-")}  
+        **Tarif:** {row.get("TARIF", "-")}  
+        **Daya:** {row.get("DAYA", "-")}  
+        **Cluster:** {row.get("KLUSTER USAHA", "-")}  
 
-                **Penjualan Tahun Lalu:** {row.get("GWh Tahun Lalu", 0):,.4f} GWh  
-                **Penjualan Tahun Ini:** {row.get("GWh Tahun Ini", 0):,.4f} GWh  
-                **Delta:** {row.get("Delta GWh", 0):,.4f} GWh  
-                **Growth:** {row.get("Growth %", 0):,.2f}%
-                """)
+        **Penjualan Tahun Lalu:** {row.get("GWh Tahun Lalu", 0):,.4f} GWh  
+        **Penjualan Tahun Ini:** {row.get("GWh Tahun Ini", 0):,.4f} GWh  
+        **Delta:** {row.get("Delta GWh", 0):,.4f} GWh  
+        **Growth:** {row.get("Growth %", 0):,.2f}%
+        """)
 
 # =========================
 # MAP SEBARAN PELANGGAN
