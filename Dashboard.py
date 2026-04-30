@@ -334,8 +334,6 @@ growth = (delta / total_lalu * 100) if total_lalu != 0 else 0
 
 st.markdown(f"""
 <div class="fixed-top-panel">
-    <div class="fixed-title">⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</div>
-
     <div class="kpi-row">
         <div class="kpi-item">
             <div class="kpi-title">{tahun_lalu}</div>
