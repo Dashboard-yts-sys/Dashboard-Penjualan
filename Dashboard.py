@@ -427,6 +427,9 @@ if search_idpel:
             kolom_tampil = [kol for kol in kolom_tampil if kol in hasil.columns]
 
             st.dataframe(
+                hasil[kolom_tampil].sort_values("GWh Tahun Ini", ascending=False),
+                use_container_width=True
+            )
                 if len(hasil) == 1:
                 row = hasil.iloc[0]
 
@@ -445,9 +448,6 @@ if search_idpel:
                 **Delta:** {row.get("Delta GWh", 0):,.4f} GWh  
                 **Growth:** {row.get("Growth %", 0):,.2f}%
                 """)
-                hasil[kolom_tampil].sort_values("GWh Tahun Ini", ascending=False),
-                use_container_width=True
-            )
 
 # =========================
 # MAP SEBARAN PELANGGAN
