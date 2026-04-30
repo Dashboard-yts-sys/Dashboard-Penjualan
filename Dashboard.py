@@ -9,6 +9,9 @@ import re
 
 st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 
+# =========================
+# CSS FIXED HEADER + KPI TERPISAH
+# =========================
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] .main .block-container {
@@ -17,47 +20,53 @@ st.markdown("""
     padding-right: 2rem;
 }
 
-.fixed-top-panel {
+/* HEADER FIXED */
+.fixed-header {
     position: fixed;
     top: 0.5rem;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
     z-index: 9999;
-    padding: 18px 24px 16px 24px;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    padding: 14px 24px;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 0 0 10px 10px;
 }
 
-.fixed-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #1f2937;
-    margin-bottom: 14px;
-    line-height: 1.2;
+/* KPI FIXED */
+.fixed-kpi {
+    position: fixed;
+    top: 88px;
+    left: calc(21rem + 1rem);
+    right: 1rem;
+    background: white;
+    z-index: 9998;
+    padding: 12px 24px;
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-radius: 0 0 10px 10px;
+    min-height: 70px;
 }
 
 .kpi-row {
     display: flex;
     justify-content: space-between;
-    gap: 28px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    padding-top: 10px;
-    border-top: 1px solid #e5e7eb;
+    gap: 24px;
+    align-items: center;
 }
 
 .kpi-item {
     flex: 1;
-    min-width: 160px;
+    display: flex;
+    flex-direction: column;
 }
 
 .kpi-title {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
     color: #64748b;
-    margin-bottom: 4px;
+    line-height: 1.1;
 }
 
 .kpi-value {
@@ -65,16 +74,11 @@ st.markdown("""
     font-weight: 800;
     color: #111827;
     line-height: 1.2;
-}
-
-.kpi-subinfo {
-    margin-top: 10px;
-    font-size: 12px;
-    color: #64748b;
+    margin-top: 2px;
 }
 
 @media (max-width: 1200px) {
-    .fixed-top-panel {
+    .fixed-header, .fixed-kpi {
         left: 1rem !important;
         right: 1rem !important;
     }
@@ -83,9 +87,18 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================
+# HEADER FIXED
+# =========================
+st.markdown("""
+<div class="fixed-header">
+    <h2 style="margin:0;">⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
+</div>
+""", unsafe_allow_html=True)
+
+# =========================
 # DEFAULT LINK DATA DI SINI
 # =========================
-DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22"
+DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4"
 
 def convert_google_drive_url(url):
     match = re.search(r"/d/([a-zA-Z0-9_-]+)", url)
@@ -325,7 +338,7 @@ elif kondisi == "Antara":
     ]
 
 # =========================
-# KPI FIXED — TARUH DI SINI, SETELAH TOTAL DIHITUNG
+# KPI FIXED
 # =========================
 total_lalu = df_filter["GWh Tahun Lalu"].sum()
 total_ini = df_filter["GWh Tahun Ini"].sum()
@@ -333,37 +346,32 @@ delta = df_filter["Delta GWh"].sum()
 growth = (delta / total_lalu * 100) if total_lalu != 0 else 0
 
 st.markdown(f"""
-<div class="fixed-top-panel">
-    <div class="fixed-title">⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</div>
+<div class="fixed-kpi">
     <div class="kpi-row">
         <div class="kpi-item">
-            <div class="kpi-title">{tahun_lalu}</div>
-            <div class="kpi-value">{total_lalu:,.2f} GWh</div>
+            <span class="kpi-title">{tahun_lalu}</span>
+            <span class="kpi-value">{total_lalu:,.2f} GWh</span>
         </div>
-
         <div class="kpi-item">
-            <div class="kpi-title">{tahun_ini}</div>
-            <div class="kpi-value">{total_ini:,.2f} GWh</div>
+            <span class="kpi-title">{tahun_ini}</span>
+            <span class="kpi-value">{total_ini:,.2f} GWh</span>
         </div>
-
         <div class="kpi-item">
-            <div class="kpi-title">Delta</div>
-            <div class="kpi-value">{delta:,.2f} GWh</div>
+            <span class="kpi-title">Delta</span>
+            <span class="kpi-value">{delta:,.2f} GWh</span>
         </div>
-
         <div class="kpi-item">
-            <div class="kpi-title">Growth</div>
-            <div class="kpi-value">{growth:.2f}%</div>
+            <span class="kpi-title">Growth</span>
+            <span class="kpi-value">{growth:.2f}%</span>
         </div>
     </div>
-
-    <div class="kpi-subinfo">
+    <div style="font-size:12px;color:#64748b;margin-top:6px;">
         Periode: {mode_periode} {pilih_bulan} | Perbandingan {tahun_lalu} vs {tahun_ini}
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<div style='height: 220px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 230px;'></div>", unsafe_allow_html=True)
 
 # =========================
 # MAP SEBARAN PELANGGAN
