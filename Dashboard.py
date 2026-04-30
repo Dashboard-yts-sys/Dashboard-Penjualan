@@ -13,7 +13,7 @@ st.markdown("""
 <style>
 /* kasih ruang di atas supaya konten tidak ketiban header fixed */
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 250px;
+    padding-top: 220px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -26,7 +26,7 @@ st.markdown("""
     right: 1rem;
     background: white;
     z-index: 9999;
-    padding: 12px 24px 10px 24px;
+    padding: 14px 24px 14px 24px;
     border-bottom: 1px solid #ddd;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     border-radius: 0 0 10px 10px;
@@ -35,15 +35,16 @@ st.markdown("""
 /* KPI FIXED */
 .fixed-kpi {
     position: fixed;
-    top: 78px;
+    top: 86px;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
     z-index: 9998;
-    padding: 12px 24px;
+    padding:  16px 24px 16px 24px;
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border-radius: 0 0 10px 10px;
+    min-height: 88px;   /* penting agar label KPI tidak kepotong */
 }
 
 /* Saat sidebar collapse / layar lebih kecil */
@@ -58,26 +59,40 @@ st.markdown("""
 .kpi-row {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 24px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .kpi-item {
-    min-width: 180px;
+    min-width: 150px;
     flex: 1;
 }
 
 .kpi-title {
     font-size: 15px;
     font-weight: 600;
-    color: #333;
-    margin-bottom: 4px;
+    color: #4b5563;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    white-space: normal;
 }
 
 .kpi-value {
     font-size: 20px;
     font-weight: 700;
     color: #0f172a;
+    line-height: 1.2;
+/* Saat layar lebih kecil / sidebar collapse */
+@media (max-width: 1200px) {
+    .fixed-header, .fixed-kpi {
+        left: 1rem !important;
+        right: 1rem !important;
+    }
+
+    .kpi-row {
+        flex-wrap: wrap;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
