@@ -17,63 +17,65 @@ st.markdown("""
     padding-right: 2rem;
 }
 
-.fixed-header {
+/* PANEL ATAS GABUNGAN: JUDUL + KPI */
+.fixed-top-panel {
     position: fixed;
-    top: 1.7rem;
-    left: calc(21rem + 1rem);
+    top: 0.5rem;
+    left: calc(21rem + 1rem);   /* sesuaikan dengan lebar sidebar */
     right: 1rem;
     background: white;
     z-index: 9999;
-    padding: 14px 24px;
-    border-bottom: 1px solid #ddd;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    border-radius: 0 0 10px 10px;
+    padding: 18px 24px 16px 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
-.fixed-kpi {
-    position: fixed;
-    top: 150px;
-    left: calc(21rem + 1rem);
-    right: 1rem;
-    background: white;
-    z-index: 9998;
-    padding: 12px 24px;
-    border-bottom: 1px solid #eee;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    border-radius: 0 0 10px 10px;
-    min-height: 80px;
+.fixed-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 14px;
+    line-height: 1.2;
 }
 
 .kpi-row {
     display: flex;
     justify-content: space-between;
-    gap: 24px;
-    align-items: center;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .kpi-item {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    min-width: 160px;
 }
 
 .kpi-title {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     color: #64748b;
-    line-height: 1.1;
+    margin-bottom: 4px;
 }
 
 .kpi-value {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
     color: #111827;
     line-height: 1.2;
-    margin-top: 2px;
+}
+
+.kpi-subinfo {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #64748b;
 }
 
 @media (max-width: 1200px) {
-    .fixed-header, .fixed-kpi {
+    .fixed-top-panel {
         left: 1rem !important;
         right: 1rem !important;
     }
@@ -338,26 +340,32 @@ delta = df_filter["Delta GWh"].sum()
 growth = (delta / total_lalu * 100) if total_lalu != 0 else 0
 
 st.markdown(f"""
-<div class="fixed-kpi">
+<div class="fixed-top-panel">
+    <div class="fixed-title">⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</div>
+
     <div class="kpi-row">
         <div class="kpi-item">
-            <span class="kpi-title">2025</span>
-            <span class="kpi-value">{total_lalu:,.2f} GWh</span>
+            <div class="kpi-title">{tahun_lalu}</div>
+            <div class="kpi-value">{total_lalu:,.2f} GWh</div>
         </div>
+
         <div class="kpi-item">
-            <span class="kpi-title">2026</span>
-            <span class="kpi-value">{total_ini:,.2f} GWh</span>
+            <div class="kpi-title">{tahun_ini}</div>
+            <div class="kpi-value">{total_ini:,.2f} GWh</div>
         </div>
+
         <div class="kpi-item">
-            <span class="kpi-title">Delta</span>
-            <span class="kpi-value">{delta:,.2f} GWh</span>
+            <div class="kpi-title">Delta</div>
+            <div class="kpi-value">{delta:,.2f} GWh</div>
         </div>
+
         <div class="kpi-item">
-            <span class="kpi-title">Growth</span>
-            <span class="kpi-value">{growth:.2f}%</span>
+            <div class="kpi-title">Growth</div>
+            <div class="kpi-value">{growth:.2f}%</div>
         </div>
     </div>
-    <div style="font-size:12px;color:#64748b;margin-top:6px;">
+
+    <div class="kpi-subinfo">
         Periode: {mode_periode} {pilih_bulan} | Perbandingan {tahun_lalu} vs {tahun_ini}
     </div>
 </div>
