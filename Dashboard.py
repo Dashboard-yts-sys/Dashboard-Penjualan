@@ -11,35 +11,80 @@ st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 
 st.markdown("""
 <style>
+/* kasih ruang di atas supaya konten tidak ketiban header fixed */
+[data-testid="stAppViewContainer"] .main .block-container {
+    padding-top: 180px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+/* HEADER FIXED */
 .fixed-header {
     position: fixed;
-    top: 0;
-    left: 21rem;
-    right: 0;
-    background-color: white;
+    top: 0.5rem;
+    left: calc(21rem + 1rem);   /* area setelah sidebar */
+    right: 1rem;
+    background: white;
     z-index: 9999;
-    padding: 10px 30px;
+    padding: 12px 24px 10px 24px;
     border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 0 0 10px 10px;
 }
+
+/* KPI FIXED */
 .fixed-kpi {
     position: fixed;
-    top: 70px;
-    left: 21rem;
-    right: 0;
-    background-color: white;
+    top: 78px;
+    left: calc(21rem + 1rem);
+    right: 1rem;
+    background: white;
     z-index: 9998;
-    padding: 12px 30px;
+    padding: 12px 24px;
     border-bottom: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-radius: 0 0 10px 10px;
 }
-.spacer {
-    height: 165px;
+
+/* Saat sidebar collapse / layar lebih kecil */
+@media (max-width: 1200px) {
+    .fixed-header, .fixed-kpi {
+        left: 1rem !important;
+        right: 1rem !important;
+    }
+}
+
+/* Optional: rapikan metric mini */
+.kpi-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.kpi-item {
+    min-width: 180px;
+    flex: 1;
+}
+
+.kpi-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.kpi-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
 }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="fixed-header">
-    <h2>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
+    <h2 style="margin:0;">⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
 </div>
 """, unsafe_allow_html=True)
 
@@ -295,16 +340,26 @@ growth = (delta / total_lalu * 100) if total_lalu != 0 else 0
 
 st.markdown(f"""
 <div class="fixed-kpi">
-    <div style="display:flex; justify-content:space-between; font-size:18px;">
-        <div><b>{mode_periode} {pilih_bulan} {tahun_lalu}</b><br>{total_lalu:,.2f} GWh</div>
-        <div><b>{mode_periode} {pilih_bulan} {tahun_ini}</b><br>{total_ini:,.2f} GWh</div>
-        <div><b>Delta</b><br>{delta:,.2f} GWh</div>
-        <div><b>Growth YoY</b><br>{growth:.2f}%</div>
+    <div class="kpi-row">
+        <div class="kpi-item">
+            <div class="kpi-title">{mode_periode} {pilih_bulan} {tahun_lalu}</div>
+            <div class="kpi-value">{total_lalu:,.2f} GWh</div>
+        </div>
+        <div class="kpi-item">
+            <div class="kpi-title">{mode_periode} {pilih_bulan} {tahun_ini}</div>
+            <div class="kpi-value">{total_ini:,.2f} GWh</div>
+        </div>
+        <div class="kpi-item">
+            <div class="kpi-title">Delta</div>
+            <div class="kpi-value">{delta:,.2f} GWh</div>
+        </div>
+        <div class="kpi-item">
+            <div class="kpi-title">Growth YoY</div>
+            <div class="kpi-value">{growth:.2f}%</div>
+        </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-st.markdown('<div class="spacer"></div>', unsafe_allow_html=True)
 
 # =========================
 # MAP SEBARAN PELANGGAN
