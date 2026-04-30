@@ -9,6 +9,12 @@ import re
 
 st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
+<div class="fixed-header">
+    <h2>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
 <style>
 /* HEADER FIXED */
 .fixed-header {
@@ -39,11 +45,6 @@ st.markdown("""
     height: 160px;
 }
 </style>
-""", unsafe_allow_html=True)
-st.markdown("""
-<div class="fixed-header">
-    <h2>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
-</div>
 """, unsafe_allow_html=True)
 
 # =========================
