@@ -12,7 +12,7 @@ st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 350px;
+    padding-top: 20px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -363,6 +363,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown("<div style='height: 180px;'></div>", unsafe_allow_html=True)
 # =========================
 # MAP SEBARAN PELANGGAN
 # =========================
