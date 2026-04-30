@@ -82,12 +82,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class="fixed-header">
-    <h2 style="margin:0;">⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
-</div>
-""", unsafe_allow_html=True)
-
 # =========================
 # DEFAULT LINK DATA DI SINI
 # =========================
