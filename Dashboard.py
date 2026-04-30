@@ -21,7 +21,7 @@ st.markdown("""
 /* HEADER FIXED */
 .fixed-header {
     position: fixed;
-    top: 1.5rem;
+    top: 2rem;
     left: calc(21rem + 1rem);   /* area setelah sidebar */
     right: 1rem;
     background: white;
