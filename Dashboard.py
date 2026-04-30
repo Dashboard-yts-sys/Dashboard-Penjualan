@@ -390,7 +390,6 @@ if search_idpel:
 
     df_search = df_filter.copy()
 
-    # pastikan kolom IDPEL dan NAMA PELANGGAN ada
     if "IDPEL" not in df_search.columns:
         st.warning("Kolom IDPEL tidak ditemukan di data.")
     else:
@@ -430,24 +429,25 @@ if search_idpel:
                 hasil[kolom_tampil].sort_values("GWh Tahun Ini", ascending=False),
                 use_container_width=True
             )
-        if len(hasil) == 1:
-        row = hasil.iloc[0]
 
-        st.markdown(f"""
-        ### 📌 Detail Pelanggan
+            if len(hasil) == 1:
+                row = hasil.iloc[0]
 
-        **Nama Pelanggan:** {row.get("NAMA PELANGGAN", "-")}  
-        **IDPEL:** {row.get("IDPEL", "-")}  
-        **UP3:** {row.get("UP3", "-")}  
-        **Tarif:** {row.get("TARIF", "-")}  
-        **Daya:** {row.get("DAYA", "-")}  
-        **Cluster:** {row.get("KLUSTER USAHA", "-")}  
+                st.markdown(f"""
+                ### 📌 Detail Pelanggan
 
-        **Penjualan Tahun Lalu:** {row.get("GWh Tahun Lalu", 0):,.4f} GWh  
-        **Penjualan Tahun Ini:** {row.get("GWh Tahun Ini", 0):,.4f} GWh  
-        **Delta:** {row.get("Delta GWh", 0):,.4f} GWh  
-        **Growth:** {row.get("Growth %", 0):,.2f}%
-        """)
+                **Nama Pelanggan:** {row.get("NAMA PELANGGAN", "-")}  
+                **IDPEL:** {row.get("IDPEL", "-")}  
+                **UP3:** {row.get("UP3", "-")}  
+                **Tarif:** {row.get("TARIF", "-")}  
+                **Daya:** {row.get("DAYA", "-")}  
+                **Cluster:** {row.get("KLUSTER USAHA", "-")}  
+
+                **Penjualan Tahun Lalu:** {row.get("GWh Tahun Lalu", 0):,.4f} GWh  
+                **Penjualan Tahun Ini:** {row.get("GWh Tahun Ini", 0):,.4f} GWh  
+                **Delta:** {row.get("Delta GWh", 0):,.4f} GWh  
+                **Growth:** {row.get("Growth %", 0):,.2f}%
+                """)
 
 # =========================
 # MAP SEBARAN PELANGGAN
