@@ -276,6 +276,16 @@ if "GOLONGAN TARIF" in df.columns:
 else:
     pilih_golongan = []
 
+# =========================
+# SEARCH IDPEL / PELANGGAN
+# =========================
+st.sidebar.header("🔍 Cari Pelanggan")
+
+search_idpel = st.sidebar.text_input(
+    "Cari IDPEL / Nama Pelanggan",
+    placeholder="Masukkan IDPEL atau nama pelanggan"
+)
+
 st.sidebar.header("📊 Filter Visual Cluster")
 
 mode_cluster = st.sidebar.selectbox(
@@ -372,6 +382,72 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown("<div style='height: 250px;'></div>", unsafe_allow_html=True)
+# =========================
+# HASIL SEARCH IDPEL / PELANGGAN
+# =========================
+if search_idpel:
+    st.subheader("🔍 Hasil Pencarian Pelanggan")
+
+    df_search = df_filter.copy()
+
+    # pastikan kolom IDPEL dan NAMA PELANGGAN ada
+    if "IDPEL" not in df_search.columns:
+        st.warning("Kolom IDPEL tidak ditemukan di data.")
+    else:
+        df_search["IDPEL"] = df_search["IDPEL"].astype(str)
+
+        if "NAMA PELANGGAN" in df_search.columns:
+            df_search["NAMA PELANGGAN"] = df_search["NAMA PELANGGAN"].astype(str)
+
+            hasil = df_search[
+                df_search["IDPEL"].str.contains(search_idpel, case=False, na=False) |
+                df_search["NAMA PELANGGAN"].str.contains(search_idpel, case=False, na=False)
+            ]
+        else:
+            hasil = df_search[
+                df_search["IDPEL"].str.contains(search_idpel, case=False, na=False)
+            ]
+
+        if hasil.empty:
+            st.info("Data pelanggan tidak ditemukan.")
+        else:
+            kolom_tampil = [
+                "UP3",
+                "NAMA PELANGGAN",
+                "IDPEL",
+                "TARIF",
+                "DAYA",
+                "KLUSTER USAHA",
+                "GWh Tahun Lalu",
+                "GWh Tahun Ini",
+                "Delta GWh",
+                "Growth %"
+            ]
+
+            kolom_tampil = [kol for kol in kolom_tampil if kol in hasil.columns]
+
+            st.dataframe(
+                if len(hasil) == 1:
+                row = hasil.iloc[0]
+
+                st.markdown(f"""
+                ### 📌 Detail Pelanggan
+
+                **Nama Pelanggan:** {row.get("NAMA PELANGGAN", "-")}  
+                **IDPEL:** {row.get("IDPEL", "-")}  
+                **UP3:** {row.get("UP3", "-")}  
+                **Tarif:** {row.get("TARIF", "-")}  
+                **Daya:** {row.get("DAYA", "-")}  
+                **Cluster:** {row.get("KLUSTER USAHA", "-")}  
+
+                **Penjualan Tahun Lalu:** {row.get("GWh Tahun Lalu", 0):,.4f} GWh  
+                **Penjualan Tahun Ini:** {row.get("GWh Tahun Ini", 0):,.4f} GWh  
+                **Delta:** {row.get("Delta GWh", 0):,.4f} GWh  
+                **Growth:** {row.get("Growth %", 0):,.2f}%
+                """)
+                hasil[kolom_tampil].sort_values("GWh Tahun Ini", ascending=False),
+                use_container_width=True
+            )
 
 # =========================
 # MAP SEBARAN PELANGGAN
