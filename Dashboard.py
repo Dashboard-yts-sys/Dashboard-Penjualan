@@ -370,7 +370,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<div style='height: 210px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 220px;'></div>", unsafe_allow_html=True)
 
 # =========================
 # MAP SEBARAN PELANGGAN
