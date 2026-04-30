@@ -13,7 +13,7 @@ st.markdown("""
 <style>
 /* kasih ruang di atas supaya konten tidak ketiban header fixed */
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 220px;
+    padding-top: 250px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
