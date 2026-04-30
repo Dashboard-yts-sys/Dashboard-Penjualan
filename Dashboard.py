@@ -10,19 +10,50 @@ import re
 st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
 <style>
-.sticky-header {
-    position: sticky;
+/* HEADER FIXED */
+.fixed-header {
+    position: fixed;
     top: 0;
-    z-index: 999;
+    left: 21rem;  /* offset sidebar */
+    right: 0;
     background-color: white;
-    padding: 18px 0 10px 0;
-    border-bottom: 1px solid #e5e7eb;
+    z-index: 999;
+    padding: 10px 30px 10px 30px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* KPI FIXED (di bawah header) */
+.fixed-kpi {
+    position: fixed;
+    top: 70px;
+    left: 21rem;
+    right: 0;
+    background-color: white;
+    z-index: 998;
+    padding: 10px 30px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Spacer supaya konten tidak ketimpa */
+.spacer {
+    height: 160px;
 }
 </style>
 """, unsafe_allow_html=True)
 st.markdown("""
-<div class="sticky-header">
-<h1>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h1>
+<div class="fixed-header">
+    <h2>⚡ Dashboard Penjualan kluster B & I UID Jawa Timur</h2>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
+<div class="fixed-kpi">
+    <div style="display:flex; justify-content:space-between;">
+        <div><b>Kumulatif {tahun_lalu}</b><br>{total_prev:,.2f} GWh</div>
+        <div><b>Kumulatif {tahun_ini}</b><br>{total_now:,.2f} GWh</div>
+        <div><b>Delta</b><br>{delta:,.2f} GWh</div>
+        <div><b>Growth YoY</b><br>{growth:.2f}%</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 # =========================
@@ -154,9 +185,10 @@ def hitung_kwh(df, tahun, kode_bulan, mode):
 nilai_lalu, sumber_lalu = hitung_kwh(df, tahun_lalu, kode_bulan, mode_periode)
 nilai_ini, sumber_ini = hitung_kwh(df, tahun_ini, kode_bulan, mode_periode)
 
-st.success(f"Mode: {mode_periode}")
-st.info(f"Sumber {tahun_lalu}: {sumber_lalu}")
-st.info(f"Sumber {tahun_ini}: {sumber_ini}")
+st.sidebar.markdown("### 📊 Parameter Data")
+st.sidebar.success(f"Mode: {mode_periode}")
+st.sidebar.info(f"Sumber {tahun_lalu}: {sumber_lalu}")
+st.sidebar.info(f"Sumber {tahun_ini}: {sumber_ini}")
 
 df = df.dropna(subset=["UP3", "TARIF", "KLUSTER USAHA"], how="any")
 
