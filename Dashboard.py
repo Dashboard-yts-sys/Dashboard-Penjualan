@@ -15,7 +15,7 @@ st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 50px;
+    padding-top: 100px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -37,7 +37,7 @@ st.markdown("""
 /* KPI FIXED */
 .fixed-kpi {
     position: fixed;
-    top: 130px;
+    top: 200px;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
