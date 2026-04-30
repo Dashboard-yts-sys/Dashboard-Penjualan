@@ -46,7 +46,7 @@ st.markdown("""
 # =========================
 # DEFAULT LINK DATA DI SINI
 # =========================
-DEFAULT_DATA_URL = "PASTE_LINK_SHAREPOINT_ATAU_GOOGLE_DRIVE_DI_SINI"
+DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQAqM9WM9C3ySolssm7NJXPhAW14_mQHJp1ImR630d8zSUY?e=aaKOf4%22"
 
 def convert_google_drive_url(url):
     match = re.search(r"/d/([a-zA-Z0-9_-]+)", url)
