@@ -13,7 +13,7 @@ st.markdown("""
 <style>
 /* kasih ruang di atas supaya konten tidak ketiban header fixed */
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 180px;
+    padding-top: 220px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -21,7 +21,7 @@ st.markdown("""
 /* HEADER FIXED */
 .fixed-header {
     position: fixed;
-    top: 0.5rem;
+    top: 1.5rem;
     left: calc(21rem + 1rem);   /* area setelah sidebar */
     right: 1rem;
     background: white;
