@@ -15,7 +15,7 @@ st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 st.markdown("""
 <style>
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 20px;
+    padding-top: 50px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -23,7 +23,7 @@ st.markdown("""
 /* HEADER FIXED */
 .fixed-header {
     position: fixed;
-    top: 1.2rem;
+    top: 1.5rem;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
