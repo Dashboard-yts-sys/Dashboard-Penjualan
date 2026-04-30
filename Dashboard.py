@@ -58,14 +58,14 @@ st.markdown("""
 }
 
 .kpi-title {
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 600;
     color: #64748b;
     line-height: 1.1;
 }
 
 .kpi-value {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 800;
     color: #111827;
     line-height: 1.2;
