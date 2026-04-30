@@ -13,7 +13,7 @@ st.markdown("""
 <style>
 /* kasih ruang di atas supaya konten tidak ketiban header fixed */
 [data-testid="stAppViewContainer"] .main .block-container {
-    padding-top: 220px;
+    padding-top: 235px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -35,7 +35,7 @@ st.markdown("""
 /* KPI FIXED */
 .fixed-kpi {
     position: fixed;
-    top: 86px;
+    top: 92px;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
@@ -44,7 +44,7 @@ st.markdown("""
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border-radius: 0 0 10px 10px;
-    min-height: 88px;   /* penting agar label KPI tidak kepotong */
+    min-height: 95px;   /* penting agar label KPI tidak kepotong */
 }
 
 /* Saat sidebar collapse / layar lebih kecil */
