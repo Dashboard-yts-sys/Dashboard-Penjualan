@@ -17,11 +17,10 @@ st.markdown("""
     padding-right: 2rem;
 }
 
-/* PANEL ATAS GABUNGAN: JUDUL + KPI */
 .fixed-top-panel {
     position: fixed;
     top: 0.5rem;
-    left: calc(21rem + 1rem);   /* sesuaikan dengan lebar sidebar */
+    left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
     z-index: 9999;
@@ -371,7 +370,8 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<div style='height: 180px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 210px;'></div>", unsafe_allow_html=True)
+
 # =========================
 # MAP SEBARAN PELANGGAN
 # =========================
