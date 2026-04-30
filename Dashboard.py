@@ -37,7 +37,7 @@ st.markdown("""
 /* KPI FIXED */
 .fixed-kpi {
     position: fixed;
-    top: 110px;
+    top: 130px;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
