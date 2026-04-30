@@ -23,7 +23,7 @@ st.markdown("""
 /* HEADER FIXED */
 .fixed-header {
     position: fixed;
-    top: 0.5rem;
+    top: 2.5rem;
     left: calc(21rem + 1rem);
     right: 1rem;
     background: white;
@@ -46,7 +46,7 @@ st.markdown("""
     border-bottom: 1px solid #eee;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     border-radius: 0 0 10px 10px;
-    min-height: 80px;
+    min-height: 135px;
 }
 
 .kpi-row {
@@ -371,7 +371,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<div style='height: 230px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 285px;'></div>", unsafe_allow_html=True)
 
 # =========================
 # MAP SEBARAN PELANGGAN
