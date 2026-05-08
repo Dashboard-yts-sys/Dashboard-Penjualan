@@ -189,7 +189,7 @@ mode_periode = st.sidebar.selectbox(
 pilih_bulan = st.sidebar.selectbox(
     "Pilih Bulan",
     list(bulan_map.keys()),
-    index=2
+    index=3
 )
 
 kode_bulan = bulan_map[pilih_bulan]
