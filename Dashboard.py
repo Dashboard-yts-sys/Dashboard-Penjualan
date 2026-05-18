@@ -650,10 +650,49 @@ fig_donut = px.pie(
 st.plotly_chart(fig_donut, use_container_width=True)
 
 # =========================
-# TABEL PIVOT
+# TABEL DETAIL PELANGGAN TERFILTER
 # =========================
-st.subheader("📋 Tabel Pivot Dinamis")
+st.subheader("📋 Tabel Detail Pelanggan Terfilter")
 
+kolom_detail = [
+    "No",
+    "UP3",
+    "NAMA PELANGGAN",
+    "IDPEL",
+    "TARIF",
+    "DAYA",
+    "Daya baru (VA)",
+    "DAYA BARU (VA)",
+    "KLUSTER USAHA",
+    "DETAIL KLUSTER USAHA",
+    "GWh Tahun Lalu",
+    "GWh Tahun Ini",
+    "Delta GWh",
+    "Growth %"
+]
+
+# Ambil hanya kolom yang benar-benar ada di Excel
+kolom_detail = [kol for kol in kolom_detail if kol in df_filter.columns]
+
+tabel_detail = df_filter[kolom_detail].copy()
+
+# Kalau kolom No tidak ada, buat nomor urut otomatis
+if "No" not in tabel_detail.columns:
+    tabel_detail.insert(0, "No", range(1, len(tabel_detail) + 1))
+
+# Sort dari pelanggan dengan pemakaian terbesar
+if "GWh Tahun Ini" in tabel_detail.columns:
+    tabel_detail = tabel_detail.sort_values("GWh Tahun Ini", ascending=False)
+
+st.dataframe(
+    tabel_detail,
+    use_container_width=True,
+    height=520
+)
+
+# =========================
+# PIVOT TETAP DIBUAT UNTUK AI INSIGHT
+# =========================
 index_pivot = ["UP3", "TARIF", "KLUSTER USAHA"]
 
 if "GOLONGAN TARIF" in df_filter.columns:
@@ -670,8 +709,6 @@ pivot["Growth %"] = pivot.apply(
     if x["GWh Tahun Lalu"] != 0 else 0,
     axis=1
 )
-
-st.dataframe(pivot, use_container_width=True)
 
 # =========================
 # AI INSIGHT
