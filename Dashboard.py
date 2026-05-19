@@ -734,7 +734,7 @@ if st.button("🔍 Generate AI Insight"):
         data_ai = pd.concat([data_ai_top, data_ai_bottom], ignore_index=True)
 
         prompt = f"""
-        Manajer Senior Business Analyst PLN UID Jawa Timur.
+        Analisis PLN UID Jawa Timur.
 
         KONTEKS:
         - Dashboard Penjualan Tenaga Listrik Tegangan Menengah (TM) dan Tegangan Tinggi (TT)
