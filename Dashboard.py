@@ -325,6 +325,12 @@ tampilkan_map = st.sidebar.checkbox("Tampilkan Map Pelanggan", value=False)
 st.sidebar.header("🧠 AI Insight")
 api_key = st.secrets["GOOGLE_API_KEY"]
 
+instruksi_ai_user = st.sidebar.text_area(
+    "Instruksi tambahan untuk AI",
+    placeholder="Analisis pada pelanggan yang Naik dan turun :",
+    height=120
+)
+
 # =========================
 # APPLY FILTER
 # =========================
@@ -728,10 +734,10 @@ if st.button("🔍 Generate AI Insight"):
         data_ai = pd.concat([data_ai_top, data_ai_bottom], ignore_index=True)
 
         prompt = f"""
-        Anda adalah Senior Business Analyst PLN UID Jawa Timur.
+        Manajer Senior Business Analyst PLN UID Jawa Timur.
 
         KONTEKS:
-        - Dashboard Penjualan Tenaga Listrik Tegangan Menengah (TM)
+        - Dashboard Penjualan Tenaga Listrik Tegangan Menengah (TM) dan Tegangan Tinggi (TT)
         - Mode periode: {mode_periode}
         - Bulan: {pilih_bulan}
         - Perbandingan: {tahun_lalu} vs {tahun_ini}
@@ -739,14 +745,18 @@ if st.button("🔍 Generate AI Insight"):
         DATA UTAMA:
         {data_ai.to_string(index=False)}
 
+        INSTRUKSI TAMBAHAN USER:
+        {instruksi_ai_user if instruksi_ai_user else "Tidak ada instruksi tambahan dari user."}
+
         INSTRUKSI ANALISIS:
         1. Fokus pola naik dan turunnya penjualan GWH, DeltaGwh, dan Growth nya.
-        2. Gunakan angka spesifik dalam GWh dan persen.
-        3. Identifikasi customer segment yang menjadi top 3 dan bottom 3 DeltaGwh pada setiap clusternya.
-        4. Identifikasi cluster yang  naik dan turun sesuai faktor sosial, budaya, hari kerja, hari besar dll yang sedang terjadi.
-        5. Identifikasi juga Up3 mana yang naik dan turun
-        5. Analisis juga  diselaraskan dengan isu/kondisi yang ada di media dari secara valid.
-        6. Cantumkan sumber data jika mengambil dari eksternal.
+        2. Fokus pada perubahan signifikan, baik positif maupun negatif.
+        3. Gunakan angka spesifik dalam GWh dan persen.
+        4. Identifikasi customer segment yang menjadi top 3 dan bottom 3 DeltaGwh pada setiap clusternya.
+        5. Identifikasi cluster yang  naik dan turun sesuai faktor sosial, budaya, hari kerja, hari besar dll yang sedang terjadi.
+        6. Identifikasi juga Up3 mana yang naik dan turun
+        7. Analisis juga  diselaraskan dengan isu/kondisi yang ada di media dari secara valid.
+        8. Cantumkan sumber data jika mengambil dari eksternal.
 
         OUTPUT WAJIB:
         1. Executive Summary singkat dalam 1 paragraph.
@@ -755,7 +765,7 @@ if st.button("🔍 Generate AI Insight"):
         4. bisa ditambahkan aktivitas yang sedang naik dan turun.
 
         GAYA BAHASA:
-        Formal , tajam, ringkas, dan cocok untuk bahan penyampaian ke manajemen PLN.
+        Formal, tajam, ringkas, dan cocok untuk bahan penyampaian ke manajemen PLN.
         """
 
         with st.spinner("AI sedang menganalisis data..."):
