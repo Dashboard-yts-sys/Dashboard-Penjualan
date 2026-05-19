@@ -740,24 +740,22 @@ if st.button("🔍 Generate AI Insight"):
         {data_ai.to_string(index=False)}
 
         INSTRUKSI ANALISIS:
-        1. Fokus pada perubahan signifikan, baik positif maupun negatif.
+        1. Fokus pola naik dan turunnya penjualan GWH, DeltaGwh, dan Growth nya.
         2. Gunakan angka spesifik dalam GWh dan persen.
-        3. Identifikasi cluster/customer segment yang menjadi growth driver.
-        4. Identifikasi cluster yang turun dan perlu perhatian.
-        5. Berikan rekomendasi aksi yang konkret untuk UP3/ULP.
-        6. Analisis bisa diselaraskan dengan isu/kondisi yang ada di media secara valid.
-        7. Cantumkan sumber data jika mengambil dari eksternal.
+        3. Identifikasi customer segment yang menjadi top 3 dan bottom 3 DeltaGwh pada setiap clusternya.
+        4. Identifikasi cluster yang  naik dan turun sesuai faktor sosial, budaya, hari kerja, hari besar dll yang sedang terjadi.
+        5. Identifikasi juga Up3 mana yang naik dan turun
+        5. Analisis juga  diselaraskan dengan isu/kondisi yang ada di media dari secara valid.
+        6. Cantumkan sumber data jika mengambil dari eksternal.
 
         OUTPUT WAJIB:
-        1. Executive Summary maksimal 3 kalimat.
-        2. Top Growth Drivers.
-        3. Underperforming Cluster.
-        4. Warning Area.
-        5. Rekomendasi Aksi.
-        6. Narasi singkat untuk bahan paparan GM UID Jawa Timur.
+        1. Executive Summary singkat dalam 1 paragraph.
+        2. Top & Bottom delta GWH, Growth setiap cluster.
+        3. Justifikasi penyebab naik atau turun sesuai info yang valid
+        4. bisa ditambahkan aktivitas yang sedang naik dan turun.
 
         GAYA BAHASA:
-        Formal, tajam, ringkas, dan cocok untuk bahan paparan manajemen PLN.
+        Formal , tajam, ringkas, dan cocok untuk bahan penyampaian ke manajemen PLN.
         """
 
         with st.spinner("AI sedang menganalisis data..."):
