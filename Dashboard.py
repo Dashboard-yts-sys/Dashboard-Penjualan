@@ -707,9 +707,6 @@ if "No" in tabel_detail.columns:
 
 tabel_detail.insert(0, "No", range(1, len(tabel_detail) + 1))
 
-# Kolom analisis pasar dikosongkan dulu
-tabel_detail["Analisis Pasar"] = ""
-
 # =========================
 # ANALISIS PASAR MANUAL PER PELANGGAN
 # =========================
@@ -737,7 +734,7 @@ else:
     else:
         st.write("Pelanggan ditemukan:")
         st.dataframe(
-            pelanggan_ai.drop(columns=["Analisis Pasar"], errors="ignore"),
+            pelanggan_ai.drop(columns=["Pelanggan_ai"], errors="ignore"),
             use_container_width=True,
             hide_index=True
         )
@@ -797,11 +794,6 @@ Buat dalam format:
                 st.success("Analisis pasar berhasil dibuat.")
                 st.markdown(analisis_text)
 
-                nomor_terpilih = pelanggan_ai["No"].tolist()
-                tabel_detail.loc[
-                    tabel_detail["No"].isin(nomor_terpilih),
-                    "Analisis Pasar"
-                ] = analisis_text
 st.dataframe(
     tabel_detail,
     use_container_width=True,
