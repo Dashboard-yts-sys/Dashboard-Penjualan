@@ -690,10 +690,20 @@ if "No" not in tabel_detail.columns:
 if "GWh Tahun Ini" in tabel_detail.columns:
     tabel_detail = tabel_detail.sort_values("GWh Tahun Ini", ascending=False)
 
+# Reset index agar tidak muncul nomor lama dari dataframe
+tabel_detail = tabel_detail.reset_index(drop=True)
+
+# Buat ulang kolom No otomatis dari 1 sampai akhir
+if "No" in tabel_detail.columns:
+    tabel_detail = tabel_detail.drop(columns=["No"])
+
+tabel_detail.insert(0, "No", range(1, len(tabel_detail) + 1))
+
 st.dataframe(
     tabel_detail,
     use_container_width=True,
-    height=520
+    height=520,
+    hide_index=True
 )
 
 # =========================
