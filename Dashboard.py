@@ -327,25 +327,21 @@ st.sidebar.header("🧠 AI Insight")
 api_key = st.secrets["GOOGLE_API_KEY"]
 
 aktifkan_analisis_pasar = st.sidebar.checkbox(
-    "Tambahkan Analisis Pasar per Pelanggan",
+    "Aktifkan Analisis Pasar Manual per Pelanggan",
     value=False
 )
 
-jumlah_analisis_pelanggan = st.sidebar.slider(
-    "Jumlah pelanggan dianalisis AI",
-    min_value=5,
-    max_value=100,
-    value=20,
-    step=5
+input_pelanggan_ai = st.sidebar.text_input(
+    "Pelanggan yang ingin dianalisis",
+    placeholder="Isi IDPEL atau nama pelanggan"
 )
 
-konteks_pasar_manual = st.sidebar.text_area(
-    "Konteks pasar / kalender / isu eksternal",
-    value=(
-        "Pertimbangkan faktor hari kerja efektif, hari besar nasional/keagamaan, "
-        "cuti bersama, Ramadan/Idulfitri, libur sekolah, pola konsumsi masyarakat, "
-        "musim produksi industri, kondisi sektor manufaktur, perdagangan, hotel, mall, "
-        "serta karakteristik cluster usaha pelanggan."
+instruksi_analisis_pasar = st.sidebar.text_area(
+    "Instruksi analisis pasar",
+    placeholder=(
+        "Contoh: Analisis penyebab kenaikan/penurunan pelanggan ini. "
+        "Pertimbangkan hari kerja efektif, hari besar agama, karakter musiman produksi dari pabrik, "
+        "tren sektor usaha, kondisi pasar, isu sosial, isu politik, isu geopolitik, dan isu teknis non teknis"
     ),
     height=140
 )
@@ -683,9 +679,6 @@ st.plotly_chart(fig_donut, use_container_width=True)
 # =========================
 # TABEL DETAIL PELANGGAN TERFILTER
 # =========================
-# =========================
-# TABEL DETAIL PELANGGAN TERFILTER
-# =========================
 st.subheader("📋 Tabel Detail Pelanggan Terfilter")
 
 kolom_detail = [
@@ -709,11 +702,9 @@ kolom_detail = [kol for kol in kolom_detail if kol in df_filter.columns]
 
 tabel_detail = df_filter[kolom_detail].copy()
 
-# Sort dari pelanggan dengan pemakaian terbesar
 if "GWh Tahun Ini" in tabel_detail.columns:
     tabel_detail = tabel_detail.sort_values("GWh Tahun Ini", ascending=False)
 
-# Reset index dan buat No otomatis
 tabel_detail = tabel_detail.reset_index(drop=True)
 
 if "No" in tabel_detail.columns:
@@ -721,116 +712,103 @@ if "No" in tabel_detail.columns:
 
 tabel_detail.insert(0, "No", range(1, len(tabel_detail) + 1))
 
-# Siapkan kolom Analisis Pasar
+# Kolom analisis pasar dikosongkan dulu
 tabel_detail["Analisis Pasar"] = ""
 
 # =========================
-# GENERATE ANALISIS PASAR PER PELANGGAN
+# ANALISIS PASAR MANUAL PER PELANGGAN
 # =========================
 if aktifkan_analisis_pasar:
-    st.info(
-        f"AI akan menganalisis maksimal {jumlah_analisis_pelanggan} pelanggan pertama "
-        f"dari tabel terfilter saat ini."
-    )
+    st.markdown("### 🧠 Analisis Pasar Manual per Pelanggan")
 
-    if st.button("🧠 Generate Analisis Pasar per Pelanggan"):
-        if not api_key:
-            st.warning("API Key belum tersedia di Streamlit Secrets.")
+    if not input_pelanggan_ai:
+        st.info("Isi IDPEL atau nama pelanggan di sidebar untuk membuat analisis pasar.")
+    else:
+        tabel_detail["IDPEL"] = tabel_detail["IDPEL"].astype(str)
+
+        if "NAMA PELANGGAN" in tabel_detail.columns:
+            tabel_detail["NAMA PELANGGAN"] = tabel_detail["NAMA PELANGGAN"].astype(str)
+
+            pelanggan_ai = tabel_detail[
+                tabel_detail["IDPEL"].str.contains(input_pelanggan_ai, case=False, na=False) |
+                tabel_detail["NAMA PELANGGAN"].str.contains(input_pelanggan_ai, case=False, na=False)
+            ].copy()
         else:
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel("gemini-3-flash-preview")
+            pelanggan_ai = tabel_detail[
+                tabel_detail["IDPEL"].str.contains(input_pelanggan_ai, case=False, na=False)
+            ].copy()
 
-            subset_ai = tabel_detail.head(jumlah_analisis_pelanggan).copy()
+        if pelanggan_ai.empty:
+            st.warning("Pelanggan yang diminta tidak ditemukan pada data terfilter.")
+        else:
+            st.write("Pelanggan ditemukan:")
+            st.dataframe(
+                pelanggan_ai.drop(columns=["Analisis Pasar"], errors="ignore"),
+                use_container_width=True,
+                hide_index=True
+            )
 
-            kolom_ai = [
-                "No",
-                "UP3",
-                "NAMA PELANGGAN",
-                "IDPEL",
-                "TARIF",
-                "DAYA",
-                "Daya baru (VA)",
-                "DAYA BARU (VA)",
-                "KLUSTER USAHA",
-                "DETAIL KLUSTER USAHA",
-                "GWh Tahun Lalu",
-                "GWh Tahun Ini",
-                "Delta GWh",
-                "Growth %"
-            ]
+            if st.button("🧠 Generate Analisis Pasar Pelanggan Ini"):
+                if not api_key:
+                    st.warning("API Key belum tersedia di Streamlit Secrets.")
+                else:
+                    genai.configure(api_key=api_key)
+                    model = genai.GenerativeModel("gemini-3-flash-preview")
 
-            kolom_ai = [kol for kol in kolom_ai if kol in subset_ai.columns]
+                    data_pelanggan_ai = pelanggan_ai.drop(
+                        columns=["Analisis Pasar"],
+                        errors="ignore"
+                    ).to_dict(orient="records")
 
-            data_pelanggan_ai = subset_ai[kolom_ai].to_dict(orient="records")
-
-            prompt_analisis_pasar = f"""
+                    prompt_analisis_pasar = f"""
 Anda adalah analis pasar dan analis penjualan tenaga listrik PLN UID Jawa Timur.
 
 TUGAS:
-Buat analisis pasar singkat untuk setiap pelanggan pada data berikut.
-Analisis harus menjelaskan kemungkinan faktor pasar/sosial/budaya/operasional yang relevan
-terhadap kenaikan atau penurunan konsumsi listrik pelanggan.
+Buat analisis pasar untuk pelanggan yang diminta user berdasarkan data pelanggan berikut.
 
 KONTEKS PERIODE:
 - Mode periode: {mode_periode}
 - Bulan: {pilih_bulan}
 - Perbandingan: {tahun_lalu} vs {tahun_ini}
 
-KONTEKS PASAR / KALENDER / ISU EKSTERNAL:
-{konteks_pasar_manual}
+INSTRUKSI USER:
+{instruksi_analisis_pasar if instruksi_analisis_pasar else "Analisis kenaikan/penurunan konsumsi listrik pelanggan dengan mempertimbangkan faktor pasar, sosial, budaya, hari kerja, hari besar, dan karakteristik sektor usaha."}
 
 DATA PELANGGAN:
-{json.dumps(data_pelanggan_ai, ensure_ascii=False, indent=2)}
+{pelanggan_ai.drop(columns=["Analisis Pasar"], errors="ignore").to_string(index=False)}
 
-KETENTUAN ANALISIS:
-1. Analisis harus spesifik mengikuti cluster/detail cluster pelanggan.
-2. Gunakan indikator Delta GWh dan Growth % sebagai dasar.
-3. Untuk pelanggan naik, jelaskan potensi pendorong pasar/kegiatan usaha.
-4. Untuk pelanggan turun, jelaskan potensi risiko/penyebab pasar/kegiatan usaha.
-5. Jangan mengarang fakta spesifik yang tidak ada datanya.
-6. Jika faktor eksternal tidak pasti, gunakan frasa: "berpotensi", "indikasi", atau "perlu dikonfirmasi".
-7. Bahasa formal, ringkas, maksimal 1-2 kalimat per pelanggan.
-8. Jangan gunakan markdown.
+KETENTUAN:
+1. Analisis harus spesifik sesuai nama pelanggan, cluster usaha, detail cluster, tarif, daya, Delta GWh, dan Growth %.
+2. Jelaskan kemungkinan faktor pasar/sosial/budaya/operasional yang relevan.
+3. Pertimbangkan faktor hari kerja efektif, hari besar nasional/keagamaan, cuti bersama, Ramadan/Idulfitri, libur sekolah, pola konsumsi masyarakat, musim produksi industri, dan kondisi sektor usaha.
+4. Jangan mengarang fakta spesifik yang tidak tersedia.
+5. Jika faktor eksternal belum pasti, gunakan frasa "berpotensi", "indikasi", atau "perlu dikonfirmasi".
+6. Berikan rekomendasi tindak lanjut singkat untuk UP3/ULP.
+7. Bahasa formal, ringkas, dan cocok untuk bahan paparan manajemen PLN.
 
-OUTPUT WAJIB:
-Kembalikan hanya JSON array valid, tanpa teks tambahan, format:
-[
-  {{
-    "No": 1,
-    "Analisis Pasar": "isi analisis singkat"
-  }},
-  {{
-    "No": 2,
-    "Analisis Pasar": "isi analisis singkat"
-  }}
-]
+OUTPUT:
+Buat dalam format:
+- Nama Pelanggan:
+- Ringkasan Kondisi:
+- Analisis Pasar:
+- Risiko/Peluang:
+- Rekomendasi Tindak Lanjut:
 """
 
-            with st.spinner("AI sedang membuat analisis pasar per pelanggan..."):
-                response = model.generate_content(prompt_analisis_pasar)
+                    with st.spinner("AI sedang membuat analisis pasar pelanggan..."):
+                        response = model.generate_content(prompt_analisis_pasar)
 
-            try:
-                text_response = response.text.strip()
+                    analisis_text = response.text
 
-                # Bersihkan jika AI membungkus JSON dengan ```json
-                text_response = text_response.replace("```json", "").replace("```", "").strip()
+                    st.success("Analisis pasar berhasil dibuat.")
+                    st.markdown(analisis_text)
 
-                hasil_ai = json.loads(text_response)
-
-                analisis_map = {
-                    int(item.get("No")): item.get("Analisis Pasar", "")
-                    for item in hasil_ai
-                    if item.get("No") is not None
-                }
-
-                tabel_detail["Analisis Pasar"] = tabel_detail["No"].map(analisis_map).fillna("")
-
-                st.success("Analisis pasar berhasil dibuat.")
-
-            except Exception as e:
-                st.error("Output AI belum terbaca sebagai JSON. Coba klik ulang atau kurangi jumlah pelanggan.")
-                st.write(e)
-                st.text(response.text)
+                    # Masukkan hasil AI ke kolom Analisis Pasar untuk pelanggan yang cocok
+                    nomor_terpilih = pelanggan_ai["No"].tolist()
+                    tabel_detail.loc[
+                        tabel_detail["No"].isin(nomor_terpilih),
+                        "Analisis Pasar"
+                    ] = analisis_text
 
 st.dataframe(
     tabel_detail,
