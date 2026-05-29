@@ -713,49 +713,48 @@ tabel_detail["Analisis Pasar"] = ""
 # =========================
 # ANALISIS PASAR MANUAL PER PELANGGAN
 # =========================
-if aktifkan_analisis_pasar:
-    st.markdown("### 🧠 Analisis Pasar Manual per Pelanggan")
+st.markdown("### 🧠 Analisis Pasar Manual per Pelanggan")
 
-    if not input_pelanggan_ai:
-        st.info("Isi IDPEL atau nama pelanggan di sidebar untuk membuat analisis pasar.")
+if not input_pelanggan_ai:
+    st.info("Isi IDPEL atau nama pelanggan di sidebar untuk membuat analisis pasar.")
+else:
+    tabel_detail["IDPEL"] = tabel_detail["IDPEL"].astype(str)
+
+    if "NAMA PELANGGAN" in tabel_detail.columns:
+        tabel_detail["NAMA PELANGGAN"] = tabel_detail["NAMA PELANGGAN"].astype(str)
+
+        pelanggan_ai = tabel_detail[
+            tabel_detail["IDPEL"].str.contains(input_pelanggan_ai, case=False, na=False) |
+            tabel_detail["NAMA PELANGGAN"].str.contains(input_pelanggan_ai, case=False, na=False)
+        ].copy()
     else:
-        tabel_detail["IDPEL"] = tabel_detail["IDPEL"].astype(str)
+        pelanggan_ai = tabel_detail[
+            tabel_detail["IDPEL"].str.contains(input_pelanggan_ai, case=False, na=False)
+        ].copy()
 
-        if "NAMA PELANGGAN" in tabel_detail.columns:
-            tabel_detail["NAMA PELANGGAN"] = tabel_detail["NAMA PELANGGAN"].astype(str)
+    if pelanggan_ai.empty:
+        st.warning("Pelanggan yang diminta tidak ditemukan pada data terfilter.")
+    else:
+        st.write("Pelanggan ditemukan:")
+        st.dataframe(
+            pelanggan_ai.drop(columns=["Analisis Pasar"], errors="ignore"),
+            use_container_width=True,
+            hide_index=True
+        )
 
-            pelanggan_ai = tabel_detail[
-                tabel_detail["IDPEL"].str.contains(input_pelanggan_ai, case=False, na=False) |
-                tabel_detail["NAMA PELANGGAN"].str.contains(input_pelanggan_ai, case=False, na=False)
-            ].copy()
-        else:
-            pelanggan_ai = tabel_detail[
-                tabel_detail["IDPEL"].str.contains(input_pelanggan_ai, case=False, na=False)
-            ].copy()
+        if st.button("🧠 Generate Analisis Pasar Pelanggan Ini"):
+            if not api_key:
+                st.warning("API Key belum tersedia di Streamlit Secrets.")
+            else:
+                genai.configure(api_key=api_key)
+                model = genai.GenerativeModel("gemini-3-flash-preview")
 
-        if pelanggan_ai.empty:
-            st.warning("Pelanggan yang diminta tidak ditemukan pada data terfilter.")
-        else:
-            st.write("Pelanggan ditemukan:")
-            st.dataframe(
-                pelanggan_ai.drop(columns=["Analisis Pasar"], errors="ignore"),
-                use_container_width=True,
-                hide_index=True
-            )
+                data_pelanggan_ai = pelanggan_ai.drop(
+                    columns=["Analisis Pasar"],
+                    errors="ignore"
+                ).to_dict(orient="records")
 
-            if st.button("🧠 Generate Analisis Pasar Pelanggan Ini"):
-                if not api_key:
-                    st.warning("API Key belum tersedia di Streamlit Secrets.")
-                else:
-                    genai.configure(api_key=api_key)
-                    model = genai.GenerativeModel("gemini-3-flash-preview")
-
-                    data_pelanggan_ai = pelanggan_ai.drop(
-                        columns=["Analisis Pasar"],
-                        errors="ignore"
-                    ).to_dict(orient="records")
-
-                    prompt_analisis_pasar = f"""
+                prompt_analisis_pasar = f"""
 Anda adalah analis pasar dan analis penjualan tenaga listrik PLN UID Jawa Timur.
 
 TUGAS:
@@ -790,21 +789,19 @@ Buat dalam format:
 - Rekomendasi Tindak Lanjut:
 """
 
-                    with st.spinner("AI sedang membuat analisis pasar pelanggan..."):
-                        response = model.generate_content(prompt_analisis_pasar)
+                with st.spinner("AI sedang membuat analisis pasar pelanggan..."):
+                    response = model.generate_content(prompt_analisis_pasar)
 
-                    analisis_text = response.text
+                analisis_text = response.text
 
-                    st.success("Analisis pasar berhasil dibuat.")
-                    st.markdown(analisis_text)
+                st.success("Analisis pasar berhasil dibuat.")
+                st.markdown(analisis_text)
 
-                    # Masukkan hasil AI ke kolom Analisis Pasar untuk pelanggan yang cocok
-                    nomor_terpilih = pelanggan_ai["No"].tolist()
-                    tabel_detail.loc[
-                        tabel_detail["No"].isin(nomor_terpilih),
-                        "Analisis Pasar"
-                    ] = analisis_text
-
+                nomor_terpilih = pelanggan_ai["No"].tolist()
+                tabel_detail.loc[
+                    tabel_detail["No"].isin(nomor_terpilih),
+                    "Analisis Pasar"
+                ] = analisis_text
 st.dataframe(
     tabel_detail,
     use_container_width=True,
