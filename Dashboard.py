@@ -6,6 +6,7 @@ import pydeck as pdk
 import requests
 from io import BytesIO
 import re
+import json
 
 st.set_page_config(page_title="Dashboard Penjualan TM & TT", layout="wide")
 
@@ -324,6 +325,30 @@ tampilkan_map = st.sidebar.checkbox("Tampilkan Map Pelanggan", value=False)
 
 st.sidebar.header("🧠 AI Insight")
 api_key = st.secrets["GOOGLE_API_KEY"]
+
+aktifkan_analisis_pasar = st.sidebar.checkbox(
+    "Tambahkan Analisis Pasar per Pelanggan",
+    value=False
+)
+
+jumlah_analisis_pelanggan = st.sidebar.slider(
+    "Jumlah pelanggan dianalisis AI",
+    min_value=5,
+    max_value=100,
+    value=20,
+    step=5
+)
+
+konteks_pasar_manual = st.sidebar.text_area(
+    "Konteks pasar / kalender / isu eksternal",
+    value=(
+        "Pertimbangkan faktor hari kerja efektif, hari besar nasional/keagamaan, "
+        "cuti bersama, Ramadan/Idulfitri, libur sekolah, pola konsumsi masyarakat, "
+        "musim produksi industri, kondisi sektor manufaktur, perdagangan, hotel, mall, "
+        "serta karakteristik cluster usaha pelanggan."
+    ),
+    height=140
+)
 
 instruksi_ai_user = st.sidebar.text_area(
     "Instruksi tambahan untuk AI",
@@ -658,6 +683,9 @@ st.plotly_chart(fig_donut, use_container_width=True)
 # =========================
 # TABEL DETAIL PELANGGAN TERFILTER
 # =========================
+# =========================
+# TABEL DETAIL PELANGGAN TERFILTER
+# =========================
 st.subheader("📋 Tabel Detail Pelanggan Terfilter")
 
 kolom_detail = [
@@ -677,27 +705,132 @@ kolom_detail = [
     "Growth %"
 ]
 
-# Ambil hanya kolom yang benar-benar ada di Excel
 kolom_detail = [kol for kol in kolom_detail if kol in df_filter.columns]
 
 tabel_detail = df_filter[kolom_detail].copy()
-
-# Kalau kolom No tidak ada, buat nomor urut otomatis
-if "No" not in tabel_detail.columns:
-    tabel_detail.insert(0, "No", range(1, len(tabel_detail) + 1))
 
 # Sort dari pelanggan dengan pemakaian terbesar
 if "GWh Tahun Ini" in tabel_detail.columns:
     tabel_detail = tabel_detail.sort_values("GWh Tahun Ini", ascending=False)
 
-# Reset index agar tidak muncul nomor lama dari dataframe
+# Reset index dan buat No otomatis
 tabel_detail = tabel_detail.reset_index(drop=True)
 
-# Buat ulang kolom No otomatis dari 1 sampai akhir
 if "No" in tabel_detail.columns:
     tabel_detail = tabel_detail.drop(columns=["No"])
 
 tabel_detail.insert(0, "No", range(1, len(tabel_detail) + 1))
+
+# Siapkan kolom Analisis Pasar
+tabel_detail["Analisis Pasar"] = ""
+
+# =========================
+# GENERATE ANALISIS PASAR PER PELANGGAN
+# =========================
+if aktifkan_analisis_pasar:
+    st.info(
+        f"AI akan menganalisis maksimal {jumlah_analisis_pelanggan} pelanggan pertama "
+        f"dari tabel terfilter saat ini."
+    )
+
+    if st.button("🧠 Generate Analisis Pasar per Pelanggan"):
+        if not api_key:
+            st.warning("API Key belum tersedia di Streamlit Secrets.")
+        else:
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel("gemini-3-flash-preview")
+
+            subset_ai = tabel_detail.head(jumlah_analisis_pelanggan).copy()
+
+            kolom_ai = [
+                "No",
+                "UP3",
+                "NAMA PELANGGAN",
+                "IDPEL",
+                "TARIF",
+                "DAYA",
+                "Daya baru (VA)",
+                "DAYA BARU (VA)",
+                "KLUSTER USAHA",
+                "DETAIL KLUSTER USAHA",
+                "GWh Tahun Lalu",
+                "GWh Tahun Ini",
+                "Delta GWh",
+                "Growth %"
+            ]
+
+            kolom_ai = [kol for kol in kolom_ai if kol in subset_ai.columns]
+
+            data_pelanggan_ai = subset_ai[kolom_ai].to_dict(orient="records")
+
+            prompt_analisis_pasar = f"""
+Anda adalah analis pasar dan analis penjualan tenaga listrik PLN UID Jawa Timur.
+
+TUGAS:
+Buat analisis pasar singkat untuk setiap pelanggan pada data berikut.
+Analisis harus menjelaskan kemungkinan faktor pasar/sosial/budaya/operasional yang relevan
+terhadap kenaikan atau penurunan konsumsi listrik pelanggan.
+
+KONTEKS PERIODE:
+- Mode periode: {mode_periode}
+- Bulan: {pilih_bulan}
+- Perbandingan: {tahun_lalu} vs {tahun_ini}
+
+KONTEKS PASAR / KALENDER / ISU EKSTERNAL:
+{konteks_pasar_manual}
+
+DATA PELANGGAN:
+{json.dumps(data_pelanggan_ai, ensure_ascii=False, indent=2)}
+
+KETENTUAN ANALISIS:
+1. Analisis harus spesifik mengikuti cluster/detail cluster pelanggan.
+2. Gunakan indikator Delta GWh dan Growth % sebagai dasar.
+3. Untuk pelanggan naik, jelaskan potensi pendorong pasar/kegiatan usaha.
+4. Untuk pelanggan turun, jelaskan potensi risiko/penyebab pasar/kegiatan usaha.
+5. Jangan mengarang fakta spesifik yang tidak ada datanya.
+6. Jika faktor eksternal tidak pasti, gunakan frasa: "berpotensi", "indikasi", atau "perlu dikonfirmasi".
+7. Bahasa formal, ringkas, maksimal 1-2 kalimat per pelanggan.
+8. Jangan gunakan markdown.
+
+OUTPUT WAJIB:
+Kembalikan hanya JSON array valid, tanpa teks tambahan, format:
+[
+  {{
+    "No": 1,
+    "Analisis Pasar": "isi analisis singkat"
+  }},
+  {{
+    "No": 2,
+    "Analisis Pasar": "isi analisis singkat"
+  }}
+]
+"""
+
+            with st.spinner("AI sedang membuat analisis pasar per pelanggan..."):
+                response = model.generate_content(prompt_analisis_pasar)
+
+            try:
+                text_response = response.text.strip()
+
+                # Bersihkan jika AI membungkus JSON dengan ```json
+                text_response = text_response.replace("```json", "").replace("```", "").strip()
+
+                hasil_ai = json.loads(text_response)
+
+                analisis_map = {
+                    int(item.get("No")): item.get("Analisis Pasar", "")
+                    for item in hasil_ai
+                    if item.get("No") is not None
+                }
+
+                tabel_detail["Analisis Pasar"] = tabel_detail["No"].map(analisis_map).fillna("")
+
+                st.success("Analisis pasar berhasil dibuat.")
+
+            except Exception as e:
+                st.error("Output AI belum terbaca sebagai JSON. Coba klik ulang atau kurangi jumlah pelanggan.")
+                st.write(e)
+                st.text(response.text)
 
 st.dataframe(
     tabel_detail,
