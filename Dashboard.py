@@ -326,11 +326,6 @@ tampilkan_map = st.sidebar.checkbox("Tampilkan Map Pelanggan", value=False)
 st.sidebar.header("🧠 AI Insight")
 api_key = st.secrets["GOOGLE_API_KEY"]
 
-aktifkan_analisis_pasar = st.sidebar.checkbox(
-    "Aktifkan Analisis Pasar Manual per Pelanggan",
-    value=False
-)
-
 input_pelanggan_ai = st.sidebar.text_input(
     "Pelanggan yang ingin dianalisis",
     placeholder="Isi IDPEL atau nama pelanggan"
