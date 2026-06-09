@@ -136,7 +136,7 @@ div[data-testid="stMetricValue"] {
 # =====================================================
 # DEFAULT LINK DATA
 # =====================================================
-DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQCWLFtYxbUXT4bDVyPsB_AaAVKpF8IMCytZSZKerUjQW-8?e=CthEx6"
+DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQB7SPeQrux0Sqh7pbO-XbzKAa6UABqOtoG00c-Yd7QX2GA?e=mmb7VO"
 
 # =====================================================
 # FUNGSI BANTUAN
