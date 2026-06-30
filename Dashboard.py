@@ -193,10 +193,23 @@ def kpi_card(label, value, caption, css_class):
         unsafe_allow_html=True
     )
 
-
 def safe_numeric(series):
-    return pd.to_numeric(series, errors="coerce").fillna(0)
+    s = series.astype(str).str.strip()
 
+    # bersihkan karakter non angka umum
+    s = s.str.replace("Rp", "", regex=False)
+    s = s.str.replace(" ", "", regex=False)
+    s = s.str.replace("\u00a0", "", regex=False)
+
+    # format Indonesia: 27.600.000 -> 27600000
+    # format desimal Indonesia: 1.234,56 -> 1234.56
+    s = s.str.replace(".", "", regex=False)
+    s = s.str.replace(",", ".", regex=False)
+
+    # hilangkan karakter lain selain angka, minus, dan titik desimal
+    s = s.str.replace(r"[^0-9\.\-]", "", regex=True)
+
+    return pd.to_numeric(s, errors="coerce").fillna(0)
 
 def format_gwh(value):
     try:
