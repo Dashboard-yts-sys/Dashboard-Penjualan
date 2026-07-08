@@ -976,7 +976,8 @@ with tab4:
     c5, c6 = st.columns(2)
 
     # =====================================================
-    # TOP/BOTTOM 10 BERDASARKAN 1 PELANGGAN PER CLUSTER
+    # TOP/BOTTOM 10 BERDASARKAN DELTA GWH CLUSTER
+    # Lalu ambil 1 pelanggan tertinggi/terendah dari setiap cluster
     # =====================================================
 
     def reset_nomor(df_input):
@@ -991,46 +992,94 @@ with tab4:
         return df_output
 
 
-    # Ambil 1 pelanggan dengan kenaikan Delta GWh tertinggi di masing-masing cluster
-    top_naik = (
-        tabel_detail[tabel_detail["Delta GWh"] > 0]
-        .sort_values(
-            ["KLUSTER USAHA", "Delta GWh", "GWh Tahun Ini"],
-            ascending=[True, False, False]
-        )
-        .groupby("KLUSTER USAHA", group_keys=False)
-        .head(1)
-        .sort_values("Delta GWh", ascending=False)
+    # =====================================================
+    # TOP 10 NAIK
+    # 1. Urutkan cluster berdasarkan total Delta GWh tertinggi
+    # 2. Ambil 1 pelanggan dengan Delta GWh tertinggi dari setiap cluster
+    # =====================================================
+
+    cluster_naik = (
+        tabel_detail
+        .groupby("KLUSTER USAHA", as_index=False)
+        .agg({"Delta GWh": "sum"})
+        .rename(columns={"Delta GWh": "Delta GWh Cluster"})
+        .query("`Delta GWh Cluster` > 0")
+        .sort_values("Delta GWh Cluster", ascending=False)
         .head(10)
     )
 
-    top_naik = reset_nomor(top_naik)
+    top_naik_list = []
 
-
-    # Ambil 1 pelanggan dengan penurunan Delta GWh terdalam di masing-masing cluster
-    top_turun = (
-        tabel_detail[tabel_detail["Delta GWh"] < 0]
-        .sort_values(
-            ["KLUSTER USAHA", "Delta GWh", "GWh Tahun Ini"],
-            ascending=[True, True, False]
+    for cluster in cluster_naik["KLUSTER USAHA"]:
+        pelanggan_tertinggi = (
+            tabel_detail[tabel_detail["KLUSTER USAHA"] == cluster]
+            .sort_values(["Delta GWh", "GWh Tahun Ini"], ascending=[False, False])
+            .head(1)
         )
-        .groupby("KLUSTER USAHA", group_keys=False)
-        .head(1)
-        .sort_values("Delta GWh", ascending=True)
+
+        top_naik_list.append(pelanggan_tertinggi)
+
+    if top_naik_list:
+        top_naik = pd.concat(top_naik_list, ignore_index=True)
+        top_naik = top_naik.merge(
+            cluster_naik,
+            on="KLUSTER USAHA",
+            how="left"
+        )
+        top_naik = top_naik.sort_values("Delta GWh Cluster", ascending=False)
+        top_naik = reset_nomor(top_naik)
+    else:
+        top_naik = pd.DataFrame()
+
+
+    # =====================================================
+    # TOP 10 TURUN
+    # 1. Urutkan cluster berdasarkan total Delta GWh paling negatif
+    # 2. Ambil 1 pelanggan dengan penurunan Delta GWh terdalam dari setiap cluster
+    # =====================================================
+
+    cluster_turun = (
+        tabel_detail
+        .groupby("KLUSTER USAHA", as_index=False)
+        .agg({"Delta GWh": "sum"})
+        .rename(columns={"Delta GWh": "Delta GWh Cluster"})
+        .query("`Delta GWh Cluster` < 0")
+        .sort_values("Delta GWh Cluster", ascending=True)
         .head(10)
     )
 
-    top_turun = reset_nomor(top_turun)
+    top_turun_list = []
+
+    for cluster in cluster_turun["KLUSTER USAHA"]:
+        pelanggan_terendah = (
+            tabel_detail[tabel_detail["KLUSTER USAHA"] == cluster]
+            .sort_values(["Delta GWh", "GWh Tahun Ini"], ascending=[True, False])
+            .head(1)
+        )
+
+        top_turun_list.append(pelanggan_terendah)
+
+    if top_turun_list:
+        top_turun = pd.concat(top_turun_list, ignore_index=True)
+        top_turun = top_turun.merge(
+            cluster_turun,
+            on="KLUSTER USAHA",
+            how="left"
+        )
+        top_turun = top_turun.sort_values("Delta GWh Cluster", ascending=True)
+        top_turun = reset_nomor(top_turun)
+    else:
+        top_turun = pd.DataFrame()
 
 
     with c5:
         st.markdown("#### 🔼 Top 10 Pelanggan Naik per Cluster")
-        st.caption("Masing-masing cluster hanya diwakili 1 pelanggan dengan kenaikan Delta GWh tertinggi.")
+        st.caption("Urutan berdasarkan total Delta GWh cluster tertinggi, lalu diambil 1 pelanggan dengan kenaikan tertinggi pada setiap cluster.")
         st.dataframe(top_naik, use_container_width=True, hide_index=True)
 
     with c6:
         st.markdown("#### 🔽 Top 10 Pelanggan Turun per Cluster")
-        st.caption("Masing-masing cluster hanya diwakili 1 pelanggan dengan penurunan Delta GWh terdalam.")
+        st.caption("Urutan berdasarkan total Delta GWh cluster paling negatif, lalu diambil 1 pelanggan dengan penurunan terdalam pada setiap cluster.")
         st.dataframe(top_turun, use_container_width=True, hide_index=True)
 
     st.markdown("#### 📋 Tabel Detail Lengkap")
