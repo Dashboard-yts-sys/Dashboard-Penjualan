@@ -194,19 +194,23 @@ def kpi_card(label, value, caption, css_class):
     )
 
 def safe_numeric(series):
+    # Jika data dari Excel sudah numeric,
+    # jangan diubah menjadi string
+    if pd.api.types.is_numeric_dtype(series):
+        return pd.to_numeric(series, errors="coerce").fillna(0)
+
+    # Jika data berupa text / object
     s = series.astype(str).str.strip()
 
-    # bersihkan karakter non angka umum
     s = s.str.replace("Rp", "", regex=False)
     s = s.str.replace(" ", "", regex=False)
     s = s.str.replace("\u00a0", "", regex=False)
 
-    # format Indonesia: 27.600.000 -> 27600000
-    # format desimal Indonesia: 1.234,56 -> 1234.56
+    # Format Indonesia:
+    # 87.324.462,00 -> 87324462.00
     s = s.str.replace(".", "", regex=False)
     s = s.str.replace(",", ".", regex=False)
 
-    # hilangkan karakter lain selain angka, minus, dan titik desimal
     s = s.str.replace(r"[^0-9\.\-]", "", regex=True)
 
     return pd.to_numeric(s, errors="coerce").fillna(0)
