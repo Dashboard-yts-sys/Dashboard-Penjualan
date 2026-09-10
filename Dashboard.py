@@ -274,7 +274,7 @@ bulan_map = {
     "Mei": "Mei",
     "Juni": "Jun",
     "Juli": "Jul",
-    "Agustus": "Agu",
+    "Agustus": "Ags",
     "September": "Sep",
     "Oktober": "Okt",
     "November": "Nov",
@@ -296,7 +296,7 @@ mode_periode = st.sidebar.selectbox(
 pilih_bulan = st.sidebar.selectbox(
     "Pilih Bulan",
     list(bulan_map.keys()),
-    index=6
+    index=7
 )
 
 kode_bulan = bulan_map[pilih_bulan]
