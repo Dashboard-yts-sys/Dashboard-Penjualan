@@ -136,7 +136,7 @@ div[data-testid="stMetricValue"] {
 # =====================================================
 # DEFAULT LINK DATA
 # =====================================================
-DEFAULT_DATA_URL = "https://ptpln365-my.sharepoint.com/:x:/g/personal/irham_tantowi_ptpln365_onmicrosoft_com/IQDImAzJV4ygS4nE706HK3uOAV5-dLfU1bYLhHPPBLD1sa8?e=YeZfjh"
+DEFAULT_DATA_URL = "https://docs.google.com/spreadsheets/d/1drE_Q7Hlihxyp4ppAFyUcQb2bI1V42HfjJhD8SMp-8Y/edit?gid=1706828423#gid=1706828423"
 
 # =====================================================
 # FUNGSI BANTUAN
@@ -296,7 +296,7 @@ mode_periode = st.sidebar.selectbox(
 pilih_bulan = st.sidebar.selectbox(
     "Pilih Bulan",
     list(bulan_map.keys()),
-    index=7
+    index=8
 )
 
 kode_bulan = bulan_map[pilih_bulan]
