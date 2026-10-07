@@ -136,7 +136,7 @@ div[data-testid="stMetricValue"] {
 # =====================================================
 # DEFAULT LINK DATA
 # =====================================================
-DEFAULT_DATA_URL = "https://docs.google.com/spreadsheets/d/1drE_Q7Hlihxyp4ppAFyUcQb2bI1V42HfjJhD8SMp-8Y/edit?gid=1706828423#gid=1706828423"
+DEFAULT_DATA_URL = "https://docs.google.com/spreadsheets/d/1drE_Q7Hlihxyp4ppAFyUcQb2bI1V42HfjJhD8SMp-8Y/edit?usp=sharing"
 
 # =====================================================
 # FUNGSI BANTUAN
